@@ -121,24 +121,6 @@ function next() {
 		loading();
 		break;
 	case 1:
-		loading();
-		countR = 0; 
-		countI = 40;
-		countF = 0;
-		countO = 40;
-		var question = document.getElementById("div_question");
-		question.style.display = "none";
-		var end = document.getElementById("div_end");
-		end.style.display = "table-cell";
-		var pic = document.getElementById("div_pic");
-		pic.innerHTML = "<iframe style=\"overflow: hidden;\" width=\"400\" height=\"400\" src=\""
-				+ getPicUrl()
-				+ "\" frameborder=\"0\" allowfullscreen></iframe>";
-		setIdea();
-		setBackSize(true);
-		// 才會回第一頁
-		step = 6;
-		break;
 	case 2:
 	case 3:
 	case 4:
