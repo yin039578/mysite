@@ -122,9 +122,9 @@ function next() {
 		break;
 	case 1:
 		loading();
-		countR = 10; 
-		countI = 20;
-		countF = 30;
+		countR = 0; 
+		countI = 40;
+		countF = 0;
 		countO = 40;
 		var question = document.getElementById("div_question");
 		question.style.display = "none";
@@ -371,7 +371,7 @@ function setBackSize(isBig) {
 function getPicUrl() {
 
 	var str = "";
-	str = str + "http://chart.apis.google.com/chart";
+	str = str + "https://chart.apis.google.com/chart";
 	str = str + "?chxl=0:||開創型 :" + countI + "||情感型 :" + countF + "||組織型 :"
 			+ countO + "||理智型 :" + countR + "|1:|0|5|10|15|20|25|30|35|40";
 	str = str + "&chxr=0,-5,100|1,0,40";
