@@ -159,9 +159,18 @@ function next() {
 			var end = document.getElementById("div_end");
 			end.style.display = "table-cell";
 			var pic = document.getElementById("div_pic");
-			pic.innerHTML = "<iframe style=\"overflow: hidden;\" width=\"400\" height=\"400\" src=\""
-					+ getPicUrl()
-					+ "\" frameborder=\"0\" allowfullscreen></iframe>";
+			pic.innerHTML = `
+                <div style="display: flex; flex-wrap: wrap;">
+                    <div style="flex: 50%;">
+                        <p>開創型: ${countI}</p>
+                        <p>情感型: ${countF}</p>
+                    </div>
+                    <div style="flex: 50%;">
+                        <p>組織型: ${countO}</p>
+                        <p>理智型: ${countR}</p>
+                    </div>
+                </div>
+            `;
 			setIdea();
 			setBackSize(true);
 			// 才會回第一頁
@@ -504,50 +513,3 @@ function myfbOut() {
 	fbdiv.style.marginLeft = "0px";
 	fbdiv.style.zindex = "0";
 }
-/* FB 程式區 */
-
-var share = {
-	method : 'stream.share',
-	u : 'http://www.fbrell.com/'
-};
-function shareData() {
-	alert(getPicUrl());
-	FB.ui({
-		method: 'feed',
-		name: 'Facebook Dialogs',
-		link: 'http://localhost:8888/PT.html/',
-		source: 'http://localhost:8888/test.html',
-		caption: '花五分鐘，看看你的個人風格',
-		description: '1.<center></center>2.裝可愛32%<center></center>3.天才3%'
-	}, function(response) {
-		if (response && response.post_id) {
-			alert('登入成功');
-		} else {
-			alert('登入失敗');
-		}
-	}
-	);
-}
-
-
-window.fbAsyncInit = function() {
-	FB.init({
-		appId : '288214277864756',
-		status : true,
-		cookie : true,
-		xfbml : true,
-		oauth : true,
-		channelUrl : "http://www.fbrell.com/channel.html"
-	});
-};
-(function(d) {
-	var js, id = 'facebook-jssdk';
-	if (d.getElementById(id)) {
-		return;
-	}
-	js = d.createElement('script');
-	js.id = id;
-	js.async = true;
-	js.src = "//connect.facebook.net/en_US/all.js";
-	d.getElementsByTagName('head')[0].appendChild(js);
-}(document));
