@@ -162,12 +162,12 @@ function next() {
 			pic.innerHTML = `
                 <div style="display: flex; flex-wrap: wrap;">
                     <div style="flex: 50%;">
-                        <p>開創型: ${countI}</p>
-                        <p>情感型: ${countF}</p>
+						<p>理智型: ${countR}</p>
+						<p>組織型: ${countO}</p>
                     </div>
                     <div style="flex: 50%;">
-                        <p>組織型: ${countO}</p>
-                        <p>理智型: ${countR}</p>
+						<p>開創型: ${countI}</p>
+                        <p>情感型: ${countF}</p>
                     </div>
                 </div>
             `;
