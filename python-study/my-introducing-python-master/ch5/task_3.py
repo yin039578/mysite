@@ -1,0 +1,1 @@
+print('a %s,b %s, c %s' % ('aa', 'bb', 'cc'))
