@@ -5,7 +5,7 @@ import pLimit from 'p-limit';
 
 const testConfig = {
     urls: [
-        { uri: 'https://intro.104dc-dev.com/wp-json/wp/v2/posts?per_page=50&page=1&context=embed', percentage: 0.2 },
+        { uri: 'https://intro.104dc-dev.com/wp-json/wp/v2/posts?per_page=77&page=1&context=embed', percentage: 0.2 },
         { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/do-my-best-director', percentage: 0.16 },
         { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/do-my-best', percentage: 0.16 },
         { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/test-birdie-2025', percentage: 0.16 },
@@ -13,13 +13,15 @@ const testConfig = {
         { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/giver-fifth', percentage: 0.16 }
     ],
     settings: {
-        numThreads: 10, // 同時執行請求數
-        totalRequests: 100, // 總請求數
-        delayMs: 50, // 每個執行緒間的請求延遲 (毫秒)
+        numThreads: 10, // 提高併發數
+        totalRequests: 500, // 總請求數
+        maxRequestsPerMinute: 500, // 每分鐘最大呼叫量
+        maxRequestsPerHour: 500, // 每小時最大呼叫量
     },
 };
 
 const responseTimes = [];
+const responseDetails = []; // 儲存響應詳細資訊
 let successCount = 0;
 let failureCount = 0;
 const errorStatistics = {
@@ -29,6 +31,8 @@ const errorStatistics = {
     http5xx: 0,
 };
 const responseLogs = {}; // 存儲每個 URL 的響應數據（成功與前三筆錯誤）
+let startTime;
+let endTime;
 
 // 初始化每個 URL 的響應日誌
 testConfig.urls.forEach(({ uri }) => {
@@ -53,15 +57,53 @@ const generateUrlList = (urls, totalRequests) => {
     return urlList.sort(() => Math.random() - 0.5);
 };
 
+// 動態計算延遲以滿足每分鐘和每小時的最大呼叫量
+let requestsThisMinute = 0;
+let requestsThisHour = 0;
+let lastMinuteStartTime = Date.now();
+let lastHourStartTime = Date.now();
+
+const calculateDelay = (settings) => {
+    const now = Date.now();
+
+    // 每分鐘限制
+    if (now - lastMinuteStartTime >= 60000) {
+        lastMinuteStartTime = now;
+        requestsThisMinute = 0;
+    }
+
+    // 每小時限制
+    if (now - lastHourStartTime >= 3600000) {
+        lastHourStartTime = now;
+        requestsThisHour = 0;
+    }
+
+    if (requestsThisMinute >= settings.maxRequestsPerMinute) {
+        return Math.max(60000 - (now - lastMinuteStartTime), 0); // 等待至下一分鐘
+    }
+
+    if (requestsThisHour >= settings.maxRequestsPerHour) {
+        return Math.max(3600000 - (now - lastHourStartTime), 0); // 等待至下一小時
+    }
+
+    return 0; // 無需延遲
+};
+
 // 單次請求函數
-const makeRequest = async (url) => {
+const makeRequest = async (url, settings) => {
+    const delay = calculateDelay(settings);
+    if (delay > 0) {
+        console.log(`Rate limit reached. Waiting ${Math.ceil(delay / 1000)} seconds...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+
     const start = performance.now();
     try {
         const response = await axios.get(url, {
             timeout: 5000, // 設置超時時間
-            // headers: {
-            //     'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-            // },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+            },
         });
         const end = performance.now();
         const responseTime = (end - start) / 1000;
@@ -75,12 +117,26 @@ const makeRequest = async (url) => {
             };
         }
 
+        // 儲存詳細資訊
+        responseDetails.push({
+            url,
+            responseTime,
+            status: response.status,
+            timestamp: new Date().toISOString(),
+        });
+
         successCount++;
+        requestsThisMinute++;
+        requestsThisHour++;
+        console.log(`Success: ${url} - Response time: ${responseTime.toFixed(2)} seconds`);
     } catch (error) {
         const end = performance.now();
         const responseTime = (end - start) / 1000;
         responseTimes.push(responseTime);
+
         failureCount++;
+        requestsThisMinute++;
+        requestsThisHour++;
 
         // 分類錯誤
         if (error.code === 'ECONNABORTED') {
@@ -103,58 +159,73 @@ const makeRequest = async (url) => {
                 status: error.response.status,
             });
         }
+
+        // 儲存詳細資訊
+        responseDetails.push({
+            url,
+            responseTime,
+            status: error.response ? error.response.status : 'N/A',
+            timestamp: new Date().toISOString(),
+        });
+
+        console.error(`Error: ${url} - ${error.message}`);
     }
 };
 
 // 主測試函數
 const runLoadTest = async (config) => {
     const { urls, settings } = config;
-    const { numThreads, totalRequests, delayMs } = settings;
+    const { numThreads, totalRequests } = settings;
     const urlList = generateUrlList(urls, totalRequests);
 
+    startTime = new Date();
     const limit = pLimit(numThreads);
 
-    const tasks = urlList.map((url, index) =>
+    const tasks = urlList.map((url) =>
         limit(async () => {
-            // 延遲控制
-            await new Promise((resolve) => setTimeout(resolve, delayMs * index));
             console.log(`正在請求: ${url}`);
-            await makeRequest(url);
+            await makeRequest(url, settings);
         })
     );
 
     await Promise.all(tasks);
+    endTime = new Date();
 
     // 統計分析
     const totalResponseTime = responseTimes.reduce((acc, time) => acc + time, 0);
     const averageResponseTime = totalResponseTime / responseTimes.length;
 
     // 儲存測試結果
-    saveTestResults(config, {
+    await saveTestResults(config, {
         successCount,
         failureCount,
         averageResponseTime,
-        longestResponseTimes: responseTimes.slice(0, 10),
+        totalTime: `${(endTime - startTime) / 1000} seconds`,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        longestResponseTimes: responseDetails
+            .sort((a, b) => b.responseTime - a.responseTime)
+            .slice(0, 10),
     });
-    saveResponseData();
+    await saveResponseData();
 };
 
 // 保存測試設定與統計數據
-const saveTestResults = (config, statistics) => {
+const saveTestResults = async (config, statistics) => {
     const fileName = `test_results_${testTimestamp}.json`;
     const resultData = {
         testConfig: config,
         statistics,
         errorStatistics,
     };
-    fs.writeFileSync(fileName, JSON.stringify(resultData, null, 2), 'utf8');
+    await fs.promises.writeFile(fileName, JSON.stringify(resultData, null, 2), 'utf8');
     console.log(`測試結果保存於: ${fileName}`);
 };
 
 // 保存響應數據
-const saveResponseData = () => {
+const saveResponseData = async () => {
     const fileName = `response_logs_${testTimestamp}.json`;
-    fs.writeFileSync(fileName, JSON.stringify(responseLogs, null, 2), 'utf8');
+    await fs.promises.writeFile(fileName, JSON.stringify(responseLogs, null, 2), 'utf8');
     console.log(`響應日誌保存於: ${fileName}`);
 };
 
