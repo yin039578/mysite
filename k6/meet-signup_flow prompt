@@ -1,0 +1,351 @@
+請參考這份壓力測試的code
+產生一組新的code幫我做壓力測試
+
+請使用K6位我建立script
+
+這次要測試的內容是活動報名系統的框架
+請幫我用壓測工具範本，讓我建立config資料
+每份資料代表一個使用者，每個thread代表一個活動報名測試流程
+幫我依序呼叫API並等待回應，再以回傳內容呼叫下一個API
+測試內容是報名，查詢報名結果，修改報名，取消報名。
+一個User資料完整完成以上流程之後才能再拿來用，不能同時相同User在兩個thread裡
+
+api與其範例
+1.add
+POST https://api.meet.104dc-dev.com/api/event/query/signup/add
+重點：
+填入活動id,pid,nickname, email等由設定提供的資料
+event_signup_id需要程式自行產生v4 uuid
+其他固定寫入相同的值
+{
+  "event_id": "ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc",
+  "pid": 270715,
+  "signup_info_list": [
+    {
+      "nickname": "AAA",
+      "email": "aa@104.cc.bb",
+      "event_signup_id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+      "signup_session_ids": [
+        "b0fffba5-5bb6-4ed1-87ac-d36bbc56c7b0"
+      ],
+      "answer_list": [],
+      "main_applicant": true
+    }
+  ]
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "OK"
+    },
+    "success": true
+}
+
+2.query
+https://api.meet.104dc-dev.com/api/event/query/ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc?pid=270715
+將活動id與pid帶入path，取回報名結果
+正確回應:
+{
+    "data": {
+        "event_id": "ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc",
+        "title": "我是超長時間測試活動喔！要審核喔！",
+        "introduction_desc": "超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動",
+        "signup_allow_role": 0,
+        "status": 1,
+        "signup_startdate": "2024-08-20T00:00:00",
+        "signup_enddate": "2030-12-31T00:00:00",
+        "session_startdate": "2024-08-20T00:00:00",
+        "session_enddate": "2030-12-31T00:00:00",
+        "is_session_full": false,
+        "online_date": "2024-08-20T11:29:55",
+        "event_signup_id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+        "speaker_list": [
+            {
+                "id": "feb4af4d-28d2-47e1-8c3d-c8d94b469ff9",
+                "pid": null,
+                "name": "YOOOOO",
+                "is_delete": false,
+                "order": 0
+            }
+        ],
+        "schedule_desc": "超長時間測試活動",
+        "schedule_type": 1,
+        "cautions_desc": "不要關！！！！",
+        "auto_approve": false,
+        "max_session_signup": 10,
+        "user_name_setting": true,
+        "user_phone_setting": false,
+        "user_mail_setting": true,
+        "user_birthday_setting": false,
+        "user_address_setting": false,
+        "user_degree_setting": false,
+        "user_company_setting": false,
+        "user_job_name_setting": false,
+        "user_employment_status_setting": false,
+        "user_industry_setting": false,
+        "user_company_unique_setting": false,
+        "user_company_invoice_setting": false,
+        "user_company_phone_setting": false,
+        "user_company_mail_setting": false,
+        "user_job_cat_setting": false,
+        "user_exp_period_years_setting": false,
+        "user_residence_num_setting": false,
+        "tag_list": [],
+        "host_list": [
+            {
+                "host_name": "毛毛測Log拉",
+                "host_mail": "yochao.yin@104.com.tw",
+                "host_id": 71,
+                "host_type": 1,
+                "host_from": 1,
+                "host_img": "https://heybar.an9.104-dev.com.tw/resource/3oqCyyuYCZ7rBGpzu4b6i6c3MuEHvuDATX8Rwj2XKZqAWAP7hNr4hzRAv8bu2d6Cb4JCQsBiVQheJe6HsoBvgHvj"
+            }
+        ],
+        "attach_list": [
+            {
+                "file_id": "eedc566e2af542a8a0b54570ed10718711",
+                "file_type": "image/jpeg",
+                "file_title": "size1000x1000.jpg",
+                "img_url": "https://heybar.an9.104-dev.com.tw/resource/2PVe7ehbFkozoaUnCAKk7orGTRJ2QormFdAfoNQeLdvyWKHVLgBoNCY7dQabm5u6dUjAFNQSKrsLcGZ7fYdNieU6",
+                "type": 0,
+                "order": 0
+            }
+        ],
+        "session_list": [
+            {
+                "session_id": "b0fffba5-5bb6-4ed1-87ac-d36bbc56c7b0",
+                "status": 0,
+                "title": "超長時間場次一，要驗票",
+                "location_name": "妖靈寺",
+                "location_address": "妖靈寺",
+                "location_post": "6001001000",
+                "location_post_desc": "台北市",
+                "location_url": null,
+                "site_session": true,
+                "online_session": false,
+                "meeting_link": "",
+                "max_user_signup": 100,
+                "order": 0,
+                "enable_showup_code": 1,
+                "time_list": [
+                    {
+                        "time_id": "051b03d5-7c2f-4905-bf1e-8409beecd910",
+                        "start_date": "2024-08-20T00:00:00",
+                        "end_date": "2030-12-31T00:00:00"
+                    }
+                ],
+                "is_full": false,
+                "is_signup": true,
+                "show_up_status": 0,
+                "verify_code_id": null,
+                "show_key": "42C9",
+                "showup_order": 0
+            },
+            {
+                "session_id": "daba40e6-8b37-4ef4-9425-09b6eca2f341",
+                "status": 0,
+                "title": "超長時間場次二，不驗票",
+                "location_name": "妖靈寺",
+                "location_address": "妖靈寺",
+                "location_post": "6001001000",
+                "location_post_desc": "台北市",
+                "location_url": null,
+                "site_session": true,
+                "online_session": false,
+                "meeting_link": "",
+                "max_user_signup": 100,
+                "order": 1,
+                "enable_showup_code": 0,
+                "time_list": [
+                    {
+                        "time_id": "11fa950c-60c8-4a56-a06e-ecf2b1b75885",
+                        "start_date": "2024-08-20T00:00:00",
+                        "end_date": "2030-12-31T00:00:00"
+                    }
+                ],
+                "is_full": false,
+                "is_signup": false,
+                "show_up_status": 0,
+                "verify_code_id": null,
+                "show_key": null,
+                "showup_order": 0
+            }
+        ],
+        "question_list": [],
+        "signup_info": [
+            {
+                "event_signup_form_id": "d997e15d-5e24-4634-b851-ee9a4bf11cfe",
+                "nickname": "AAA",
+                "email": "aa@104.cc.bb",
+                "cellphone": null,
+                "birthday": null,
+                "address": null,
+                "post_num": null,
+                "company_name": null,
+                "job_name": null,
+                "degree_level": null,
+                "school_id": null,
+                "school_name": null,
+                "major_id": null,
+                "major_name": null,
+                "company_invoice": null,
+                "company_phone": null,
+                "company_mail": null,
+                "employment_status": null,
+                "ind_cat_no": null,
+                "personal_agree_time": "2025-03-13T17:56:12",
+                "group_agree_time": null,
+                "exp_period_years": null,
+                "job_cat_no": null,
+                "residence_num": null,
+                "cellphone_type": 1,
+                "id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+                "post_num_desc": "",
+                "job_cat_no_desc": "",
+                "residence_num_desc": "",
+                "ind_cat_no_desc": "",
+                "employment_status_desc": null,
+                "status": 0,
+                "comment": null,
+                "main_applicant": true,
+                "modify_status_date": null
+            }
+        ],
+        "is_group": 0,
+        "group_signup_limit": 1,
+        "group_company_setting_by_type": 0,
+        "redirect_url": null,
+        "allow_signup_modification_type": 1
+    },
+    "success": true
+}
+
+3.audit
+PUT https://api.meet.104dc-dev.com/api/event/query/signup/audit
+照query回傳的signup_info資料寫入signup_list裡
+增加signup_session_ids物件，內容照著範例給
+增加answer_list給空陣列
+增加"is_add_user": false
+把event_signup_form_id搬到物件外層
+
+{
+    "event_id": "ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc",
+    "pid": 270715,
+    "event_signup_form_id": "d997e15d-5e24-4634-b851-ee9a4bf11cfe",
+    "signup_list": [
+        {
+            "signup_session_ids": [
+                "daba40e6-8b37-4ef4-9425-09b6eca2f341"
+            ],
+            "answer_list": [],
+            "is_add_user": false,
+            "nickname": "AAA",
+            "email": "aa@104.cc.bb",
+            "cellphone": null,
+            "birthday": null,
+            "address": null,
+            "post_num": null,
+            "company_name": null,
+            "job_name": null,
+            "degree_level": null,
+            "school_id": null,
+            "school_name": null,
+            "major_id": null,
+            "major_name": null,
+            "company_invoice": null,
+            "company_phone": null,
+            "company_mail": null,
+            "employment_status": null,
+            "ind_cat_no": null,
+            "personal_agree_time": "2025-03-13T17:56:12",
+            "group_agree_time": null,
+            "exp_period_years": null,
+            "job_cat_no": null,
+            "residence_num": null,
+            "cellphone_type": 1,
+            "id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+            "post_num_desc": "",
+            "job_cat_no_desc": "",
+            "residence_num_desc": "",
+            "ind_cat_no_desc": "",
+            "employment_status_desc": null,
+            "status": 0,
+            "comment": null,
+            "main_applicant": true,
+            "modify_status_date": null
+        }
+    ]
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "更新成功"
+    },
+    "success": true
+}
+
+4.cancel
+POST https://api.meet.104dc-dev.com/api/event/query/signup/cancel
+把query回傳結果的signup_info_form_id與pid帶入呼叫body裡進行刪除
+{
+  "event_signup_form_id": "d997e15d-5e24-4634-b851-ee9a4bf11cfe",
+  "pid": 270715
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "OK"
+    },
+    "success": true
+}
+
+User List
+[{
+    "pid": 270715,
+    "nickname": "測試01", 
+    "email": "batch0001@batch.com.tw",
+},{
+    "pid": 276827,
+    "nickname": "測試02", 
+    "email": "batch0002@batch.com.tw",
+},{
+    "pid": 271826,
+    "nickname": "測試03", 
+    "email": "batch0003@batch.com.tw",
+},{
+    "pid": 271827,
+    "nickname": "測試04", 
+    "email": "batch0004@batch.com.tw",
+},{
+    "pid": 271828,
+    "nickname": "測試05", 
+    "email": "batch0005@batch.com.tw",
+},{
+    "pid": 271829,
+    "nickname": "測試06", 
+    "email": "batch0006@batch.com.tw",
+},{
+    "pid": 271830,
+    "nickname": "測試07", 
+    "email": "batch0007@batch.com.tw",
+},{
+    "pid": 271831,
+    "nickname": "測試08", 
+    "email": "batch0008@batch.com.tw",
+},{
+    "pid": 271832,
+    "nickname": "測試09", 
+    "email": "batch0009@batch.com.tw",
+},{
+    "pid": 271833,
+    "nickname": "測試10", 
+    "email": "batch0010@batch.com.tw",
+},
+]
+
