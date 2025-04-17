@@ -1,0 +1,29 @@
+### 發現有現有pid版本，抽查都是正確的，決定就先拿這些來用
+
+我要批次讀取CSV檔案裡的內容去呼叫API，並將結果寫入另一個檔案，細節如下
+
+用mail去換帳號狀態與id的api，規格如下
+GET https://ac-manager.104-dev.com.tw/api/identify/email/{email}
+回應格式範例如下，可能回傳陣列，請以isMain與isVerified皆為true的物件當作更新資料的準
+若是查無資料，則回填null，若是資料不符合isMain與isVerified條件則回填fail
+還沒執行的就留空，每次查詢回來都去寫檔案，然後有值得就不進行查詢
+[
+    {
+        "id": 6000000031174,
+        "pid": "276833",
+        "isMain": true,
+        "isVerified": true,
+        "idNo": 3781639118485,
+        "createDate": "2023/03/29 18:38:16",
+        "updateDate": "2025/04/09 14:36:03"
+    },
+    {
+        "id": 6000000031168,
+        "pid": "276827",
+        "isMain": true,
+        "isVerified": false,
+        "idNo": 3781639118479,
+        "createDate": "2023/03/29 17:35:57",
+        "updateDate": "2025/04/09 14:36:03"
+    }
+]

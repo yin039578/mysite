@@ -1,0 +1,142 @@
+
+壓力測試腳本需求 Prompt
+
+一 總體需求敘述
+使用 k6 工具進行壓力測試。模擬使用者對某產品功能（如活動報名流程）進行完整操作，並依據 API 回應進行資料驗證與紀錄，同時輸出測試報告。
+
+二 非產品面需求
+
+併發與執行策略
+使用固定併發數 vus，例如 10
+每個 VU 僅執行指定次數 iterationsPerVU 後退出
+使用 per-vu-iterations executor
+每筆測試資料只能被處理一次
+
+測試資料來源
+來源為 CSV 檔案
+第一行為欄位名稱，以下每行為一筆使用者資料，例如 email nickname pid
+使用 SharedArray 讀取 CSV，所有 VU 共用記憶體，但僅進行唯讀存取
+
+API 呼叫流程
+第一步呼叫查詢 API query
+第二步呼叫報到 API update
+呼叫順序為 query 接著 update
+每一步需根據 API response 結果判斷是否進入下一步
+
+
+錯誤處理
+每個 API 呼叫不做 retry 僅執行一次
+
+若失敗則記錄錯誤訊息
+若 API 有 msg 欄位則記錄該欄位內容
+若無 msg 則記錄 HTTP status code
+錯誤內容需保證不影響 CSV 欄位結構，例如用引號包覆含逗號的錯誤訊息
+
+時間與格式處理
+每筆測試資料需記錄測試起始時間 使用本地時間
+格式為 YYYYMMDD HH:MM:SS 不含逗號 避免干擾 CSV 格式
+
+測試結果輸出
+每筆資料輸出為一行文字 以 console.log 印出
+開頭為 CSV_LINE 字樣 方便後續用 grep 擷取
+輸出欄位依序為
+email
+nickname
+pid
+showup_order
+start_time
+queryRespTime
+updateRespTime
+error
+無須寫入實體 CSV 檔案 後續使用 shell 工具 grep 或 sed 彙整即可
+
+三 產品面需求
+
+query API
+POST 請求至指定 URL https://api.meet.104dc-dev.com/api/event/verify_showup
+payload 包含 verify_code_id support_id enable_check_showup
+verify_code_id從user資料取得
+support_id需要設定，為固定值
+enable_check_showup固定為1
+回應應包含 success 為 true
+data 物件內 is_ok 為 true status 為 1
+範例如下：
+{
+  "verify_code_id": "464d6774-ad31-4a07-b6bb-906606230974",
+  "support_id": "5bcaddf6-fafe-47ec-aa4a-fe8cdb008bca",
+  "enable_check_showup": 1
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "OK",
+        "showup_info": {
+            "user_info": [
+                {
+                    "column": "nickname",
+                    "name": "個人姓名",
+                    "value": "測零零零一"
+                }
+            ],
+            "job_info": [],
+            "company_info": [],
+            "questionnaire": [],
+            "enable_check_showup": 1,
+            "nickname": "測零零零一"
+        }
+    },
+    "success": true
+}
+
+update API
+PUT 請求至指定 URL https://api.meet.104dc-dev.com/api/event/verify_showup
+payload 包含 verify_code_id support_id enable_check_showup
+verify_code_id從user資料取得
+support_id需要設定，為固定值
+enable_check_showup固定為1
+回應應包含 success 為 true
+data 物件內 is_ok 為 true status 為 1
+正確情況從這個api取回showup_order放在輸出csv內容裡
+範例如下：
+{
+  "verify_code_id": "464d6774-ad31-4a07-b6bb-906606230974",
+  "support_id": "5bcaddf6-fafe-47ec-aa4a-fe8cdb008bca",
+  "enable_check_showup": 1
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "OK",
+        "showup_info": {
+            "user_info": [],
+            "job_info": [],
+            "company_info": [],
+            "questionnaire": [],
+            "enable_check_showup": 1,
+            "nickname": "測零零零一",
+            "show_up_status": 1,
+            "showup_order": 1
+        }
+    },
+    "success": true
+}
+
+四 可調整變數
+
+vus 測試時使用的併發數
+duration 測試最大執行時間
+iterationsPerVU 每個 VU 執行的次數
+support_id 測試使用的支援 ID
+CSV 檔案名稱與路徑
+報表輸出格式與欄位配置
+
+五 執行與整合建議
+
+可用 shell script 包裝執行指令
+執行 k6 後用 grep 抓取含 CSV_LINE 的行
+使用 awk 或 sed 將 console output 彙整為結構化 CSV
+後續如有需求再導出成 HTML 圖表或統計摘要

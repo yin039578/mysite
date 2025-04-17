@@ -1,0 +1,297 @@
+
+壓力測試腳本需求 Prompt
+
+一 總體需求敘述
+使用 k6 工具進行壓力測試。模擬使用者對某產品功能（如活動報名流程）進行完整操作，並依據 API 回應進行資料驗證與紀錄，同時輸出測試報告。
+
+二 非產品面需求
+
+併發與執行策略
+使用固定併發數 vus，例如 10
+每個 VU 僅執行指定次數 iterationsPerVU 後退出
+使用 per-vu-iterations executor
+每筆測試資料只能被處理一次
+
+測試資料來源
+來源為 CSV 檔案
+第一行為欄位名稱，以下每行為一筆使用者資料，例如 email nickname pid
+使用 SharedArray 讀取 CSV，所有 VU 共用記憶體，但僅進行唯讀存取
+
+API 呼叫流程
+第一步呼叫報名 API add
+第二步呼叫查詢 API query
+呼叫順序為 add 接著 query
+每一步需根據 API response 結果判斷是否進入下一步
+若 add 失敗則不呼叫 query
+
+錯誤處理
+每個 API 呼叫不做 retry 僅執行一次
+若失敗則記錄錯誤訊息
+若 API 有 msg 欄位則記錄該欄位內容
+若無 msg 則記錄 HTTP status code
+錯誤內容需保證不影響 CSV 欄位結構，例如用引號包覆含逗號的錯誤訊息
+
+時間與格式處理
+每筆測試資料需記錄測試起始時間 使用本地時間
+格式為 YYYYMMDD HH:MM:SS 不含逗號 避免干擾 CSV 格式
+
+測試結果輸出
+每筆資料輸出為一行文字 以 console.log 印出
+開頭為 CSV_LINE 字樣 方便後續用 grep 擷取
+輸出欄位依序為
+email
+nickname
+pid
+event_signup_id
+event_signup_form_id
+start_time
+addRespTime
+queryRespTime
+error
+無須寫入實體 CSV 檔案 後續使用 shell 工具 grep 或 sed 彙整即可
+
+handleSummary 輸出
+僅以 console.log 印出 k6 的 metrics 統計資訊
+無需額外產生 HTML 或 JSON 報告
+如需擴充可另行設定
+
+三 產品面需求
+
+add API
+POST 請求至指定 URL https://api.meet.104dc-dev.com/api/event/query/signup/add
+payload 包含 event_id pid nickname email event_signup_id
+event_signup_id 為自產 UUID v4
+固定 session_id 寫入 signup_session_ids 欄位
+回應應包含 success 為 true
+data 物件內 is_ok 為 true status 為 1
+範例如下：
+{
+  "event_id": "ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc",
+  "pid": 270715,
+  "signup_info_list": [
+    {
+      "nickname": "AAA",
+      "email": "aa@104.cc.bb",
+      "event_signup_id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+      "signup_session_ids": [
+        "b0fffba5-5bb6-4ed1-87ac-d36bbc56c7b0"
+      ],
+      "answer_list": [],
+      "main_applicant": true
+    }
+  ]
+}
+正確回應:
+{
+    "data": {
+        "is_ok": true,
+        "status": 1,
+        "msg": "OK"
+    },
+    "success": true
+}
+
+query API
+GET 請求至指定 URL 包含活動 event_id 與使用者 pid  https://api.meet.104dc-dev.com/api/event/query/{event_id}?pid={pid}
+回應需包含 data.signup_info 且為非空陣列
+其中 event_signup_form_id 為後續辨識用欄位
+若有 session_list 欄位可根據需求擴充解析
+
+API 回應驗證
+每次 API 呼叫都要驗證
+HTTP status 為 200
+JSON 結構能成功 parse
+回傳結果中 success data.is_ok data.status 符合預期
+範例如下：
+正確回應:
+{
+    "data": {
+        "event_id": "ab8b378a-ae3c-4a7a-aa7f-c4d4eb00bbdc",
+        "title": "我是超長時間測試活動喔！要審核喔！",
+        "introduction_desc": "超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動超長時間測試活動",
+        "signup_allow_role": 0,
+        "status": 1,
+        "signup_startdate": "2024-08-20T00:00:00",
+        "signup_enddate": "2030-12-31T00:00:00",
+        "session_startdate": "2024-08-20T00:00:00",
+        "session_enddate": "2030-12-31T00:00:00",
+        "is_session_full": false,
+        "online_date": "2024-08-20T11:29:55",
+        "event_signup_id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+        "speaker_list": [
+            {
+                "id": "feb4af4d-28d2-47e1-8c3d-c8d94b469ff9",
+                "pid": null,
+                "name": "YOOOOO",
+                "is_delete": false,
+                "order": 0
+            }
+        ],
+        "schedule_desc": "超長時間測試活動",
+        "schedule_type": 1,
+        "cautions_desc": "不要關！！！！",
+        "auto_approve": false,
+        "max_session_signup": 10,
+        "user_name_setting": true,
+        "user_phone_setting": false,
+        "user_mail_setting": true,
+        "user_birthday_setting": false,
+        "user_address_setting": false,
+        "user_degree_setting": false,
+        "user_company_setting": false,
+        "user_job_name_setting": false,
+        "user_employment_status_setting": false,
+        "user_industry_setting": false,
+        "user_company_unique_setting": false,
+        "user_company_invoice_setting": false,
+        "user_company_phone_setting": false,
+        "user_company_mail_setting": false,
+        "user_job_cat_setting": false,
+        "user_exp_period_years_setting": false,
+        "user_residence_num_setting": false,
+        "tag_list": [],
+        "host_list": [
+            {
+                "host_name": "毛毛測Log拉",
+                "host_mail": "yochao.yin@104.com.tw",
+                "host_id": 71,
+                "host_type": 1,
+                "host_from": 1,
+                "host_img": "https://heybar.an9.104-dev.com.tw/resource/3oqCyyuYCZ7rBGpzu4b6i6c3MuEHvuDATX8Rwj2XKZqAWAP7hNr4hzRAv8bu2d6Cb4JCQsBiVQheJe6HsoBvgHvj"
+            }
+        ],
+        "attach_list": [
+            {
+                "file_id": "eedc566e2af542a8a0b54570ed10718711",
+                "file_type": "image/jpeg",
+                "file_title": "size1000x1000.jpg",
+                "img_url": "https://heybar.an9.104-dev.com.tw/resource/2PVe7ehbFkozoaUnCAKk7orGTRJ2QormFdAfoNQeLdvyWKHVLgBoNCY7dQabm5u6dUjAFNQSKrsLcGZ7fYdNieU6",
+                "type": 0,
+                "order": 0
+            }
+        ],
+        "session_list": [
+            {
+                "session_id": "b0fffba5-5bb6-4ed1-87ac-d36bbc56c7b0",
+                "status": 0,
+                "title": "超長時間場次一，要驗票",
+                "location_name": "妖靈寺",
+                "location_address": "妖靈寺",
+                "location_post": "6001001000",
+                "location_post_desc": "台北市",
+                "location_url": null,
+                "site_session": true,
+                "online_session": false,
+                "meeting_link": "",
+                "max_user_signup": 100,
+                "order": 0,
+                "enable_showup_code": 1,
+                "time_list": [
+                    {
+                        "time_id": "051b03d5-7c2f-4905-bf1e-8409beecd910",
+                        "start_date": "2024-08-20T00:00:00",
+                        "end_date": "2030-12-31T00:00:00"
+                    }
+                ],
+                "is_full": false,
+                "is_signup": true,
+                "show_up_status": 0,
+                "verify_code_id": null,
+                "show_key": "42C9",
+                "showup_order": 0
+            },
+            {
+                "session_id": "daba40e6-8b37-4ef4-9425-09b6eca2f341",
+                "status": 0,
+                "title": "超長時間場次二，不驗票",
+                "location_name": "妖靈寺",
+                "location_address": "妖靈寺",
+                "location_post": "6001001000",
+                "location_post_desc": "台北市",
+                "location_url": null,
+                "site_session": true,
+                "online_session": false,
+                "meeting_link": "",
+                "max_user_signup": 100,
+                "order": 1,
+                "enable_showup_code": 0,
+                "time_list": [
+                    {
+                        "time_id": "11fa950c-60c8-4a56-a06e-ecf2b1b75885",
+                        "start_date": "2024-08-20T00:00:00",
+                        "end_date": "2030-12-31T00:00:00"
+                    }
+                ],
+                "is_full": false,
+                "is_signup": false,
+                "show_up_status": 0,
+                "verify_code_id": null,
+                "show_key": null,
+                "showup_order": 0
+            }
+        ],
+        "question_list": [],
+        "signup_info": [
+            {
+                "event_signup_form_id": "d997e15d-5e24-4634-b851-ee9a4bf11cfe",
+                "nickname": "AAA",
+                "email": "aa@104.cc.bb",
+                "cellphone": null,
+                "birthday": null,
+                "address": null,
+                "post_num": null,
+                "company_name": null,
+                "job_name": null,
+                "degree_level": null,
+                "school_id": null,
+                "school_name": null,
+                "major_id": null,
+                "major_name": null,
+                "company_invoice": null,
+                "company_phone": null,
+                "company_mail": null,
+                "employment_status": null,
+                "ind_cat_no": null,
+                "personal_agree_time": "2025-03-13T17:56:12",
+                "group_agree_time": null,
+                "exp_period_years": null,
+                "job_cat_no": null,
+                "residence_num": null,
+                "cellphone_type": 1,
+                "id": "46a508ad-ca16-478a-85d7-efc83f5f5eb2",
+                "post_num_desc": "",
+                "job_cat_no_desc": "",
+                "residence_num_desc": "",
+                "ind_cat_no_desc": "",
+                "employment_status_desc": null,
+                "status": 0,
+                "comment": null,
+                "main_applicant": true,
+                "modify_status_date": null
+            }
+        ],
+        "is_group": 0,
+        "group_signup_limit": 1,
+        "group_company_setting_by_type": 0,
+        "redirect_url": null,
+        "allow_signup_modification_type": 1
+    },
+    "success": true
+}
+
+四 可調整變數
+
+vus 測試時使用的併發數
+duration 測試最大執行時間
+iterationsPerVU 每個 VU 執行的次數
+event_id 測試活動 ID
+session_id 測試使用的場次 ID
+CSV 檔案名稱與路徑
+報表輸出格式與欄位配置
+
+五 執行與整合建議
+
+可用 shell script 包裝執行指令
+執行 k6 後用 grep 抓取含 CSV_LINE 的行
+使用 awk 或 sed 將 console output 彙整為結構化 CSV
+後續如有需求再導出成 HTML 圖表或統計摘要
