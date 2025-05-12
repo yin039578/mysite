@@ -1,3 +1,4 @@
+// gpt-o3mini-high 2025/4/17
 import http from "k6/http";
 import { check, sleep } from "k6";
 import { Trend, Rate } from "k6/metrics";
@@ -5,10 +6,10 @@ import { SharedArray } from "k6/data";
 
 // ========= 統一設定區 =========
 const CONFIG = {
-  event_id: "0037bce4-706d-4dfb-a1a0-eaa9b62dfa2c",
-  session_id: "c72c23b9-5a56-4d20-a78c-8a19d5447d2e",  // 固定 session_id
+  event_id: "991afc9e-afc7-4c7f-9427-d425d5ec637f",
+  session_id: "446ab3c9-a67d-489f-9950-b63ad84e4233",  // 固定 session_id
   vus: 10,  // 指定併發數
-  maxDuration: "10m",  // 最大執行時間
+  maxDuration: "60m",  // 最大執行時間
 };
 
 // ========= 讀取 CSV 資料 =========
@@ -128,7 +129,7 @@ export default function () {
     ]
   });
   
-  let addRes = http.post("https://api.meet.104dc-dev.com/api/event/query/signup/add", addPayload, { headers });
+  let addRes = http.post("https://api.meet.104dc-dev.com/api/event/signup", addPayload, { headers });
   let addRespTime = addRes.timings.duration;
   addTrend.add(addRespTime);
   let addValidation = validateResponse(addRes, "add API");

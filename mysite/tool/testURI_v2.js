@@ -5,18 +5,13 @@ import pLimit from 'p-limit';
 
 const testConfig = {
     urls: [
-        { uri: 'https://intro.104dc-dev.com/wp-json/wp/v2/posts?per_page=77&page=1&context=embed', percentage: 0.2 },
-        { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/do-my-best-director', percentage: 0.16 },
-        { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/do-my-best', percentage: 0.16 },
-        { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/test-birdie-2025', percentage: 0.16 },
-        { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/do-my-best-director', percentage: 0.16 },
-        { uri: 'https://intro.104dc-dev.com/wp-json/104-cms/v1/elementor/getPostBySlug/giver-fifth', percentage: 0.16 }
+        { uri: 'https://api.meet.104dc-staging.com/api/event/query/07e88225-0fc5-470d-bf26-506ce6b7e8f5?pid=18404647', percentage: 1 },
     ],
     settings: {
         numThreads: 10, // 提高併發數
-        totalRequests: 500, // 總請求數
-        maxRequestsPerMinute: 500, // 每分鐘最大呼叫量
-        maxRequestsPerHour: 500, // 每小時最大呼叫量
+        totalRequests: 1000, // 總請求數
+        maxRequestsPerMinute: 1000, // 每分鐘最大呼叫量
+        maxRequestsPerHour: 1000, // 每小時最大呼叫量
     },
 };
 
@@ -102,7 +97,7 @@ const makeRequest = async (url, settings) => {
         const response = await axios.get(url, {
             timeout: 5000, // 設置超時時間
             headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                // 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
             },
         });
         const end = performance.now();

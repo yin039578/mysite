@@ -1,3 +1,4 @@
+// gpt-o3mini-high 2025/4/16
 import http from "k6/http";
 import { sleep } from "k6";
 import { Trend, Rate } from "k6/metrics";
@@ -5,9 +6,9 @@ import { SharedArray } from "k6/data";
 
 // —— 統一設定區 —— 
 const CONFIG = {
-  vus: 10,                          // 併發數
+  vus: 70,                          // 併發數
   maxDuration: "10m",               // 最長執行時間
-  support_id: "5bcaddf6-fafe-47ec-aa4a-fe8cdb008bca", // 固定支援 ID
+  support_id: "a62321ce-7132-4b69-9974-88deb87ffc94", // 固定支援 ID
 };
 
 // —— 動態讀取 CSV header 並產生物件 ——

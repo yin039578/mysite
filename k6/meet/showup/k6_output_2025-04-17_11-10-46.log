@@ -1,0 +1,217 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: showup_v1.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 10 max VUs, 10m30s max duration (incl. graceful stop):
+              * test: 10 iterations for each of 10 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+running (00m01.0s), 10/10 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 10 VUs  00m01.0s/10m0s  000/100 iters, 10 per VU
+
+running (00m02.0s), 10/10 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 10 VUs  00m02.0s/10m0s  000/100 iters, 10 per VU
+time="2025-04-17T11:10:49+08:00" level=info msg="CSV_LINE:batch0089@batch.com.tw,測零零八九,271912,1,20250417 11:10:47,451.32,213.41," source=console
+time="2025-04-17T11:10:49+08:00" level=info msg="CSV_LINE:batch0081@batch.com.tw,測零零八一,271904,2,20250417 11:10:47,467.23,248.03," source=console
+time="2025-04-17T11:10:49+08:00" level=info msg="CSV_LINE:batch0016@batch.com.tw,測零零一六,271839,3,20250417 11:10:47,451.87,313.05," source=console
+time="2025-04-17T11:10:49+08:00" level=info msg="CSV_LINE:batch0062@batch.com.tw,測零零六二,271885,4,20250417 11:10:47,269.45,345.11," source=console
+time="2025-04-17T11:10:49+08:00" level=info msg="CSV_LINE:batch0034@batch.com.tw,測零零三四,271857,5,20250417 11:10:47,268.65,353.31," source=console
+time="2025-04-17T11:10:50+08:00" level=info msg="CSV_LINE:batch0043@batch.com.tw,測零零四三,271866,6,20250417 11:10:47,203.57,198.76," source=console
+time="2025-04-17T11:10:50+08:00" level=info msg="CSV_LINE:batch0088@batch.com.tw,測零零八八,271911,7,20250417 11:10:47,216.77,237.76," source=console
+time="2025-04-17T11:10:50+08:00" level=info msg="CSV_LINE:batch0015@batch.com.tw,測零零一五,271838,8,20250417 11:10:47,215.03,256.00," source=console
+
+running (00m03.0s), 10/10 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 10 VUs  00m03.0s/10m0s  000/100 iters, 10 per VU
+time="2025-04-17T11:10:50+08:00" level=info msg="CSV_LINE:batch0014@batch.com.tw,測零零一四,271837,9,20250417 11:10:47,191.91,282.44," source=console
+time="2025-04-17T11:10:50+08:00" level=info msg="CSV_LINE:batch0090@batch.com.tw,測零零九零,271913,10,20250417 11:10:47,196.88,317.73," source=console
+
+running (00m04.0s), 10/10 VUs, 8 complete and 0 interrupted iterations
+test   [   8% ] 10 VUs  00m04.0s/10m0s  008/100 iters, 10 per VU
+time="2025-04-17T11:10:51+08:00" level=info msg="CSV_LINE:batch0008@batch.com.tw,測零零零八,271831,11,20250417 11:10:50,191.32,137.09," source=console
+time="2025-04-17T11:10:51+08:00" level=info msg="CSV_LINE:batch0031@batch.com.tw,測零零三一,271854,12,20250417 11:10:50,195.64,174.44," source=console
+time="2025-04-17T11:10:51+08:00" level=info msg="CSV_LINE:batch0067@batch.com.tw,測零零六七,271890,13,20250417 11:10:50,194.02,199.63," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0082@batch.com.tw,測零零八二,271905,14,20250417 11:10:50,206.69,281.94," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0013@batch.com.tw,測零零一三,271836,15,20250417 11:10:50,201.82,298.81," source=console
+
+running (00m05.0s), 10/10 VUs, 10 complete and 0 interrupted iterations
+test   [  10% ] 10 VUs  00m05.0s/10m0s  010/100 iters, 10 per VU
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0063@batch.com.tw,測零零六三,271886,16,20250417 11:10:51,165.79,184.25," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0048@batch.com.tw,測零零四八,271871,17,20250417 11:10:51,155.50,251.83," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0075@batch.com.tw,測零零七五,271898,18,20250417 11:10:51,148.40,249.82," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0045@batch.com.tw,測零零四五,271868,19,20250417 11:10:51,139.46,273.34," source=console
+time="2025-04-17T11:10:52+08:00" level=info msg="CSV_LINE:batch0099@batch.com.tw,測零零九九,271922,20,20250417 11:10:51,132.42,307.18," source=console
+
+running (00m06.0s), 10/10 VUs, 15 complete and 0 interrupted iterations
+test   [  15% ] 10 VUs  00m06.0s/10m0s  015/100 iters, 10 per VU
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0069@batch.com.tw,測零零六九,271892,21,20250417 11:10:52,166.65,140.90," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0061@batch.com.tw,測零零六一,271884,22,20250417 11:10:52,136.07,135.91," source=console
+
+running (00m07.0s), 10/10 VUs, 20 complete and 0 interrupted iterations
+test   [  20% ] 10 VUs  00m07.0s/10m0s  020/100 iters, 10 per VU
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0027@batch.com.tw,測零零二七,271850,23,20250417 11:10:52,138.13,181.65," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0032@batch.com.tw,測零零三二,271855,24,20250417 11:10:53,145.87,155.44," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0044@batch.com.tw,測零零四四,271867,25,20250417 11:10:53,142.17,147.14," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0033@batch.com.tw,測零零三三,271856,26,20250417 11:10:53,130.59,152.75," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0007@batch.com.tw,測零零零七,271830,27,20250417 11:10:53,146.44,172.92," source=console
+time="2025-04-17T11:10:54+08:00" level=info msg="CSV_LINE:batch0066@batch.com.tw,測零零六六,271889,28,20250417 11:10:53,148.62,177.58," source=console
+time="2025-04-17T11:10:55+08:00" level=info msg="CSV_LINE:batch0065@batch.com.tw,測零零六五,271888,29,20250417 11:10:53,140.59,239.02," source=console
+time="2025-04-17T11:10:55+08:00" level=info msg="CSV_LINE:batch0070@batch.com.tw,測零零七零,271893,30,20250417 11:10:53,135.17,230.48," source=console
+
+running (00m08.0s), 10/10 VUs, 22 complete and 0 interrupted iterations
+test   [  22% ] 10 VUs  00m08.0s/10m0s  022/100 iters, 10 per VU
+
+running (00m09.0s), 10/10 VUs, 30 complete and 0 interrupted iterations
+test   [  30% ] 10 VUs  00m09.0s/10m0s  030/100 iters, 10 per VU
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0059@batch.com.tw,測零零五九,271882,31,20250417 11:10:55,171.65,163.20," source=console
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0041@batch.com.tw,測零零四一,271864,32,20250417 11:10:55,159.70,160.49," source=console
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0087@batch.com.tw,測零零八七,271910,33,20250417 11:10:55,128.28,188.23," source=console
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0002@batch.com.tw,測零零零二,276833,34,20250417 11:10:55,148.14,190.41," source=console
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0094@batch.com.tw,測零零九四,271917,35,20250417 11:10:55,145.68,192.69," source=console
+time="2025-04-17T11:10:56+08:00" level=info msg="CSV_LINE:batch0083@batch.com.tw,測零零八三,271906,36,20250417 11:10:55,136.25,153.65," source=console
+time="2025-04-17T11:10:57+08:00" level=info msg="CSV_LINE:batch0026@batch.com.tw,測零零二六,271849,37,20250417 11:10:55,169.75,157.54," source=console
+time="2025-04-17T11:10:57+08:00" level=info msg="CSV_LINE:batch0068@batch.com.tw,測零零六八,271891,38,20250417 11:10:55,185.35,176.33," source=console
+
+running (00m10.0s), 10/10 VUs, 30 complete and 0 interrupted iterations
+test   [  30% ] 10 VUs  00m10.0s/10m0s  030/100 iters, 10 per VU
+time="2025-04-17T11:10:57+08:00" level=info msg="CSV_LINE:batch0025@batch.com.tw,測零零二五,271848,39,20250417 11:10:56,146.75,184.92," source=console
+time="2025-04-17T11:10:57+08:00" level=info msg="CSV_LINE:batch0060@batch.com.tw,測零零六零,271883,40,20250417 11:10:56,128.02,210.36," source=console
+
+running (00m11.0s), 10/10 VUs, 38 complete and 0 interrupted iterations
+test   [  38% ] 10 VUs  00m11.0s/10m0s  038/100 iters, 10 per VU
+time="2025-04-17T11:10:58+08:00" level=info msg="CSV_LINE:batch0049@batch.com.tw,測零零四九,271872,41,20250417 11:10:57,189.73,140.86," source=console
+time="2025-04-17T11:10:58+08:00" level=info msg="CSV_LINE:batch0001@batch.com.tw,測零零零一,270715,42,20250417 11:10:57,168.26,139.59," source=console
+time="2025-04-17T11:10:58+08:00" level=info msg="CSV_LINE:batch0006@batch.com.tw,測零零零六,271829,43,20250417 11:10:57,138.76,216.59," source=console
+
+running (00m12.0s), 10/10 VUs, 40 complete and 0 interrupted iterations
+test   [  40% ] 10 VUs  00m12.0s/10m0s  040/100 iters, 10 per VU
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0052@batch.com.tw,測零零五二,271875,45,20250417 11:10:57,158.22,226.94," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0084@batch.com.tw,測零零八四,271907,44,20250417 11:10:57,153.84,226.91," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0086@batch.com.tw,測零零八六,271909,46,20250417 11:10:58,144.95,184.47," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0003@batch.com.tw,測零零零三,271826,47,20250417 11:10:57,134.40,414.87," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0028@batch.com.tw,測零零二八,271851,48,20250417 11:10:58,144.98,199.40," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0085@batch.com.tw,測零零八五,271908,49,20250417 11:10:58,143.02,300.94," source=console
+time="2025-04-17T11:10:59+08:00" level=info msg="CSV_LINE:batch0050@batch.com.tw,測零零五零,271873,50,20250417 11:10:58,137.90,317.54," source=console
+
+running (00m13.0s), 10/10 VUs, 43 complete and 0 interrupted iterations
+test   [  43% ] 10 VUs  00m13.0s/10m0s  043/100 iters, 10 per VU
+
+running (00m14.0s), 10/10 VUs, 50 complete and 0 interrupted iterations
+test   [  50% ] 10 VUs  00m14.0s/10m0s  050/100 iters, 10 per VU
+time="2025-04-17T11:11:01+08:00" level=info msg="CSV_LINE:batch0079@batch.com.tw,測零零七九,271902,51,20250417 11:10:59,389.94,152.57," source=console
+time="2025-04-17T11:11:01+08:00" level=info msg="CSV_LINE:batch0091@batch.com.tw,測零零九一,271914,52,20250417 11:10:59,402.20,148.70," source=console
+time="2025-04-17T11:11:01+08:00" level=info msg="CSV_LINE:batch0017@batch.com.tw,測零零一七,271840,53,20250417 11:10:59,562.30,138.10," source=console
+time="2025-04-17T11:11:01+08:00" level=info msg="CSV_LINE:batch0042@batch.com.tw,測零零四二,271865,54,20250417 11:11:00,484.43,207.41," source=console
+time="2025-04-17T11:11:01+08:00" level=info msg="CSV_LINE:batch0024@batch.com.tw,測零零二四,271847,55,20250417 11:11:00,473.10,239.68," source=console
+time="2025-04-17T11:11:02+08:00" level=info msg="CSV_LINE:batch0093@batch.com.tw,測零零九三,271916,56,20250417 11:11:00,235.95,262.46," source=console
+time="2025-04-17T11:11:02+08:00" level=info msg="CSV_LINE:batch0056@batch.com.tw,測零零五六,271879,57,20250417 11:11:00,247.03,307.97," source=console
+time="2025-04-17T11:11:02+08:00" level=info msg="CSV_LINE:batch0018@batch.com.tw,測零零一八,271841,58,20250417 11:11:00,252.31,359.88," source=console
+
+running (00m15.0s), 10/10 VUs, 50 complete and 0 interrupted iterations
+test   [  50% ] 10 VUs  00m15.0s/10m0s  050/100 iters, 10 per VU
+time="2025-04-17T11:11:02+08:00" level=info msg="CSV_LINE:batch0055@batch.com.tw,測零零五五,271878,59,20250417 11:11:00,134.90,338.10," source=console
+time="2025-04-17T11:11:02+08:00" level=info msg="CSV_LINE:batch0080@batch.com.tw,測零零八零,271903,60,20250417 11:11:00,134.62,518.02," source=console
+
+running (00m16.0s), 10/10 VUs, 58 complete and 0 interrupted iterations
+test   [  58% ] 10 VUs  00m16.0s/10m0s  058/100 iters, 10 per VU
+time="2025-04-17T11:11:03+08:00" level=info msg="CSV_LINE:batch0029@batch.com.tw,測零零二九,271852,61,20250417 11:11:02,316.81,134.62," source=console
+time="2025-04-17T11:11:03+08:00" level=info msg="CSV_LINE:batch0021@batch.com.tw,測零零二一,271844,62,20250417 11:11:02,323.67,138.60," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0057@batch.com.tw,測零零五七,271880,63,20250417 11:11:02,188.17,194.68," source=console
+
+running (00m17.0s), 10/10 VUs, 60 complete and 0 interrupted iterations
+test   [  60% ] 10 VUs  00m17.0s/10m0s  060/100 iters, 10 per VU
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0092@batch.com.tw,測零零九二,271915,64,20250417 11:11:02,204.89,233.78," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0074@batch.com.tw,測零零七四,271897,65,20250417 11:11:02,194.92,254.07," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0023@batch.com.tw,測零零二三,271846,66,20250417 11:11:03,193.64,344.55," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0096@batch.com.tw,測零零九六,271919,67,20250417 11:11:03,190.79,381.92," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0098@batch.com.tw,測零零九八,271921,68,20250417 11:11:03,196.09,285.83," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0095@batch.com.tw,測零零九五,271918,69,20250417 11:11:03,169.85,280.39," source=console
+time="2025-04-17T11:11:04+08:00" level=info msg="CSV_LINE:batch0010@batch.com.tw,測零零一零,271833,70,20250417 11:11:03,127.92,232.31," source=console
+
+running (00m18.0s), 10/10 VUs, 63 complete and 0 interrupted iterations
+test   [  63% ] 10 VUs  00m18.0s/10m0s  063/100 iters, 10 per VU
+
+running (00m19.0s), 10/10 VUs, 70 complete and 0 interrupted iterations
+test   [  70% ] 10 VUs  00m19.0s/10m0s  070/100 iters, 10 per VU
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0019@batch.com.tw,測零零一九,271842,71,20250417 11:11:04,263.76,192.09," source=console
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0051@batch.com.tw,測零零五一,271874,72,20250417 11:11:04,239.06,198.90," source=console
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0097@batch.com.tw,測零零九七,271920,73,20250417 11:11:05,146.87,219.49," source=console
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0072@batch.com.tw,測零零七二,271895,74,20250417 11:11:05,145.43,168.88," source=console
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0004@batch.com.tw,測零零零四,271827,75,20250417 11:11:05,141.81,178.76," source=console
+time="2025-04-17T11:11:06+08:00" level=info msg="CSV_LINE:batch0053@batch.com.tw,測零零五三,271876,76,20250417 11:11:05,148.64,190.60," source=console
+time="2025-04-17T11:11:07+08:00" level=info msg="CSV_LINE:batch0058@batch.com.tw,測零零五八,271881,77,20250417 11:11:05,160.69,223.23," source=console
+time="2025-04-17T11:11:07+08:00" level=info msg="CSV_LINE:batch0076@batch.com.tw,測零零七六,271899,78,20250417 11:11:05,153.94,274.36," source=console
+
+running (00m20.0s), 10/10 VUs, 70 complete and 0 interrupted iterations
+test   [  70% ] 10 VUs  00m20.0s/10m0s  070/100 iters, 10 per VU
+time="2025-04-17T11:11:07+08:00" level=info msg="CSV_LINE:batch0046@batch.com.tw,測零零四六,271869,79,20250417 11:11:05,139.76,333.20," source=console
+time="2025-04-17T11:11:07+08:00" level=info msg="CSV_LINE:batch0030@batch.com.tw,測零零三零,271853,80,20250417 11:11:05,152.22,253.47," source=console
+
+running (00m21.0s), 10/10 VUs, 78 complete and 0 interrupted iterations
+test   [  78% ] 10 VUs  00m21.0s/10m0s  078/100 iters, 10 per VU
+time="2025-04-17T11:11:08+08:00" level=info msg="CSV_LINE:batch0071@batch.com.tw,測零零七一,271894,81,20250417 11:11:07,257.63,204.38," source=console
+time="2025-04-17T11:11:08+08:00" level=info msg="CSV_LINE:batch0040@batch.com.tw,測零零四零,271863,82,20250417 11:11:07,278.27,223.91," source=console
+time="2025-04-17T11:11:08+08:00" level=info msg="CSV_LINE:batch0038@batch.com.tw,測零零三八,271861,83,20250417 11:11:07,193.04,234.16," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0012@batch.com.tw,測零零一二,271835,84,20250417 11:11:07,201.80,236.59," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0054@batch.com.tw,測零零五四,271877,85,20250417 11:11:07,193.60,241.62," source=console
+
+running (00m22.0s), 10/10 VUs, 80 complete and 0 interrupted iterations
+test   [  80% ] 10 VUs  00m22.0s/10m0s  080/100 iters, 10 per VU
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0073@batch.com.tw,測零零七三,271896,86,20250417 11:11:07,257.32,246.96," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0047@batch.com.tw,測零零四七,271870,87,20250417 11:11:08,220.85,262.65," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0078@batch.com.tw,測零零七八,271901,88,20250417 11:11:08,380.41,282.84," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0005@batch.com.tw,測零零零五,271828,89,20250417 11:11:08,189.68,277.78," source=console
+time="2025-04-17T11:11:09+08:00" level=info msg="CSV_LINE:batch0020@batch.com.tw,測零零二零,271843,90,20250417 11:11:08,206.94,290.18," source=console
+
+running (00m23.0s), 10/10 VUs, 85 complete and 0 interrupted iterations
+test   [  85% ] 10 VUs  00m23.0s/10m0s  085/100 iters, 10 per VU
+
+running (00m24.0s), 10/10 VUs, 90 complete and 0 interrupted iterations
+test   [  90% ] 10 VUs  00m24.0s/10m0s  090/100 iters, 10 per VU
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0011@batch.com.tw,測零零一一,271834,91,20250417 11:11:09,324.05,218.05," source=console
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0009@batch.com.tw,測零零零九,271832,92,20250417 11:11:09,307.89,229.22," source=console
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0077@batch.com.tw,測零零七七,271900,93,20250417 11:11:09,238.59,233.93," source=console
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0035@batch.com.tw,測零零三五,271858,94,20250417 11:11:10,197.87,208.77," source=console
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0022@batch.com.tw,測零零二二,271845,95,20250417 11:11:10,208.95,245.56," source=console
+time="2025-04-17T11:11:11+08:00" level=info msg="CSV_LINE:batch0064@batch.com.tw,測零零六四,271887,96,20250417 11:11:10,198.92,270.06," source=console
+time="2025-04-17T11:11:12+08:00" level=info msg="CSV_LINE:batch0037@batch.com.tw,測零零三七,271860,97,20250417 11:11:10,190.03,261.83," source=console
+time="2025-04-17T11:11:12+08:00" level=info msg="CSV_LINE:batch0039@batch.com.tw,測零零三九,271862,98,20250417 11:11:10,193.35,291.49," source=console
+time="2025-04-17T11:11:12+08:00" level=info msg="CSV_LINE:batch0036@batch.com.tw,測零零三六,271859,99,20250417 11:11:10,194.28,284.79," source=console
+
+running (00m25.0s), 10/10 VUs, 90 complete and 0 interrupted iterations
+test   [  90% ] 10 VUs  00m25.0s/10m0s  090/100 iters, 10 per VU
+time="2025-04-17T11:11:12+08:00" level=info msg="CSV_LINE:batch0100@batch.com.tw,測零一零零,271923,100,20250417 11:11:10,219.69,267.72," source=console
+
+running (00m26.0s), 01/10 VUs, 99 complete and 0 interrupted iterations
+test   [  99% ] 10 VUs  00m26.0s/10m0s  099/100 iters, 10 per VU
+
+     data_received..................: 115 kB  4.4 kB/s
+     data_sent......................: 50 kB   1.9 kB/s
+     http_req_blocked...............: avg=54.21ms   min=0s       med=2µs      max=1.55s    p(90)=3µs      p(95)=28.87ms  
+     http_req_connecting............: avg=9.17ms    min=0s       med=0s       max=186.18ms p(90)=0s       p(95)=8.93ms   
+     http_req_duration..............: avg=221.49ms  min=127.91ms med=199.15ms max=562.29ms p(90)=318.32ms p(95)=382.32ms 
+       { expected_response:true }...: avg=221.49ms  min=127.91ms med=199.15ms max=562.29ms p(90)=318.32ms p(95)=382.32ms 
+     http_req_failed................: 0.00%   0 out of 200
+     http_req_receiving.............: avg=136.36µs  min=24µs     med=99µs     max=1.92ms   p(90)=149µs    p(95)=161.34µs 
+     http_req_sending...............: avg=343.11µs  min=36µs     med=346.5µs  max=1.5ms    p(90)=509µs    p(95)=542.49µs 
+     http_req_tls_handshaking.......: avg=44.12ms   min=0s       med=0s       max=1.35s    p(90)=0s       p(95)=18.98ms  
+     http_req_waiting...............: avg=221.01ms  min=127.34ms med=198.62ms max=561.65ms p(90)=317.91ms p(95)=381.92ms 
+     http_reqs......................: 200     7.663321/s
+     iteration_duration.............: avg=2.55s     min=2.27s    med=2.44s    max=4.07s    p(90)=2.77s    p(95)=3.5s     
+     iterations.....................: 100     3.831661/s
+     query_api_response_time........: avg=208.96498 min=127.917  med=190.409  max=562.3    p(90)=323.7069 p(95)=451.34555
+     query_api_success_rate.........: 100.00% 100 out of 100
+     update_api_response_time.......: avg=234.02795 min=134.619  med=229.8515 max=518.023  p(90)=317.5562 p(95)=345.51725
+     update_api_success_rate........: 100.00% 100 out of 100
+     vus............................: 1       min=1          max=10
+     vus_max........................: 10      min=10         max=10
+
+
+running (00m26.1s), 00/10 VUs, 100 complete and 0 interrupted iterations
+test ✓ [ 100% ] 10 VUs  00m26.1s/10m0s  100/100 iters, 10 per VU
