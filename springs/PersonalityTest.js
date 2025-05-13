@@ -118,7 +118,8 @@ function next() {
 		showCheckBox();
 		clearCheckBox();
 		setQuestion();
-		loading();
+		loading(800);
+		//shareData();
 		break;
 	case 1:
 	case 2:
@@ -129,7 +130,7 @@ function next() {
 			qstep = qstep + 1;
 			clearCheckBox();
 			setQuestion();
-			loading();
+			loading(300);
 		}
 		if (qstep > 2) {
 			setText(qAll[step]);
@@ -138,7 +139,7 @@ function next() {
 			clearCheckBox();
 			showCheckBox();
 			setQuestion();
-			loading();
+			loading(800);
 		}
 		break;
 	case 5:
@@ -147,20 +148,29 @@ function next() {
 			qstep = qstep + 1;
 			clearCheckBox();
 			setQuestion();
-			loading();
+			loading(300);
 		}
 		if (qstep > 2) {
 			// else顯示
-			loading();
+			loading(1000);
 
 			var question = document.getElementById("div_question");
 			question.style.display = "none";
 			var end = document.getElementById("div_end");
 			end.style.display = "table-cell";
 			var pic = document.getElementById("div_pic");
-			pic.innerHTML = "<iframe style=\"overflow: hidden;\" width=\"400\" height=\"400\" src=\""
-					+ getPicUrl()
-					+ "\" frameborder=\"0\" allowfullscreen></iframe>";
+			pic.innerHTML = `
+                <div style="display: flex; flex-wrap: wrap;">
+                    <div style="flex: 50%;">
+						<p>理智型: ${countR}</p>
+						<p>組織型: ${countO}</p>
+                    </div>
+                    <div style="flex: 50%;">
+						<p>開創型: ${countI}</p>
+                        <p>情感型: ${countF}</p>
+                    </div>
+                </div>
+            `;
 			setIdea();
 			setBackSize(true);
 			// 才會回第一頁
@@ -178,7 +188,7 @@ function next() {
 		// scrollbar拉到最上
 		document.documentElement.scrollTop = 0;
 		document.body.scrollTop = 0;
-		loading();
+		loading(1000);
 		break;
 	}
 }
@@ -355,14 +365,14 @@ function getPicUrl() {
 	var str = "";
 	str = str + "https://chart.apis.google.com/chart";
 	str = str + "?chxl=0:||開創型 :" + countI + "||情感型 :" + countF + "||組織型 :"
-			+ countO + "||理智型 :" + countR + "|1:|0|5|10|15|20|25|30|35|40";
+			+ countO + "||理智型 :" + countR + "|1:|5|10|15|20|25|30|35|40";
 	str = str + "&chxr=0,-5,100|1,0,40";
 	str = str + "&chxt=x,y";
 	str = str + "&chs=400x400";
 	str = str + "&cht=r";
 	str = str + "&chco=0000FF";
 	str = str + "&chds=0,40";
-	str = str + "&chd=t:" + cal(countR, countI) + "," + countI;
+	str = str + "&chd=t:" + cal(countI, countR) + "," + countI;
 	str = str + "," + cal(countI, countF) + "," + countF;
 	str = str + "," + cal(countF, countO) + "," + countO;
 	str = str + "," + cal(countO, countR) + "," + countR;
@@ -374,17 +384,32 @@ function getPicUrl() {
 
 // 計算中間點公式
 function cal(x, y) {
-	x = x || 1	
-	y = y || 1
 	return Math.sqrt(2) * ((x * y) / (parseInt(x) + parseInt(y)));
 }
 
 // 顯示評語判斷
 function setIdea() {
 	// 先取得最大數
-	const numArr = [countF, countI, countR, countO];
-	const lagest = Math.max(...numArr);
+	var temp1 = 0;
+	var temp2 = 0;
+	var lagest = 0;
+	if (countF > countI) {
+		temp1 = countF;
+	} else {
+		temp1 = countI;
+	}
+	if (countO > countR) {
+		temp2 = countO;
+	} else {
+		temp2 = countR;
+	}
+	if (temp1 > temp2) {
+		lagest = temp1;
+	} else {
+		lagest = temp2;
+	}
 	// 顯示評語
+
 	var text = document.getElementById("div_endText");
 	// 須先清空，否則第二次做會一直累加
 	text.innerHTML = "";
@@ -405,12 +430,12 @@ function setIdea() {
 	text.innerHTML = text.innerHTML.substr(0, text.innerHTML.lastIndexOf("<"));
 }
 
-function loading() {
+function loading(num) {
 	var loading = document.getElementById("loading");
 	var load = document.getElementById("load");
 	loading.style.display = "block";
 	load.style.display = "none";
-	setTimeout(showload, 200);
+	setTimeout(showload, 500);
 }
 
 function showload() {
@@ -420,10 +445,71 @@ function showload() {
 	load.style.display = "block";
 }
 
+function download() {
+	window.open('\save.jsp?data=' + countI + "," + countF + "," + countO + ","
+			+ countR, 'test', config = 'height=100,width=100');
+	// OpenWindow("\save.jsp","data",10,10,pic.innerHTML + data.innerHTML);
+}
+
+function OpenWindow(str_url, str_name, str_width, str_height, data) {
+
+	var oWin = null;
+	var str_param = "scrollbars=yes,status=yes,resizable=yes,width=%width%,height=%height%";
+	var str_form = "";
+	var str_form_head = "<form name=\"%form_name%\" action=\"%url%\" method=\"post\">";
+	var str_form_foot = "</form>";
+	var str_form_param = "<textarea name=\"%param_name%\" cols=\"20\" rows=\"5\" wrap=\"off\" >%param_value%</textarea>";
+	var str_javascript_execute = "<script type=\"text/javascript\">document.%form_name%.submit();</sc"
+			+ "ript>";
+	var arr_data = new Array();
+	str_form_head = str_form_head.replace("%form_name%", str_name);
+	str_form_head = str_form_head.replace("%url%", str_url);
+	arr_data.push(str_form_head);
+
+	str_form_param = str_form_param.replace("%param_name%", "data");
+	str_form_param = str_form_param.replace("%param_value%", countI + ","
+			+ countF + "," + countO + "," + countR);
+	arr_data.push(str_form_param);
+
+	arr_data.push(str_form_foot);
+	str_javascript_execute = str_javascript_execute.replace("%form_name%",
+			str_name);
+	arr_data.push(str_javascript_execute);
+
+	str_param = str_param.replace("%width%", str_width);
+	str_param = str_param.replace("%height%", str_height);
+
+	oWin = window.open("", str_name, str_param);
+	oWin.document.write(arr_data.join(""));
+	return (oWin);
+}
+
 function printout() {
 	if (!window.print) {
 		alert("列印功能暫時停用，請按 Ctrl-P 來列印");
 		return;
 	}
 	window.print();
+}
+
+function MM_openBrWindow(theURL, winName, features) {
+	window.open(theURL, winName, features);
+}
+
+function myfbIn() {
+	var fbdiv = document.getElementById("myfb");
+	fbdiv.style.position = "absolute";
+	fbdiv.style.width = "700px";
+	fbdiv.style.height = "200px";
+	fbdiv.style.zindex = "1";
+	fbdiv.style.marginLeft = "-85px"
+}
+
+function myfbOut() {
+	var fbdiv = document.getElementById("myfb");
+	fbdiv.style.position = "static";
+	fbdiv.style.width = "70px";
+	fbdiv.style.height = "20px";
+	fbdiv.style.marginLeft = "0px";
+	fbdiv.style.zindex = "0";
 }
