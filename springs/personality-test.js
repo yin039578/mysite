@@ -103,11 +103,11 @@ function render() {
     const { R, I, O, F } = state.score;
     app.innerHTML = `
       <div class="title">測驗結果</div>
-      <div class="score-list">
-        <div class="score-item" style="color:${styleDesc[3].color}">理智型：${R}</div>
-        <div class="score-item" style="color:${styleDesc[0].color}">開創型：${I}</div>
-        <div class="score-item" style="color:${styleDesc[2].color}">組織型：${O}</div>
-        <div class="score-item" style="color:${styleDesc[1].color}">情感型：${F}</div>
+      <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: space-between;">
+        <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 25%; min-width: 0; text-align: center;">理智型：${R}</div>
+        <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 25%; min-width: 0; text-align: center;">開創型：${I}</div>
+        <div class="score-item" style="color:${styleDesc[2].color}; flex: 1 1 25%; min-width: 0; text-align: center;">組織型：${O}</div>
+        <div class="score-item" style="color:${styleDesc[1].color}; flex: 1 1 25%; min-width: 0; text-align: center;">情感型：${F}</div>
       </div>
       <canvas id="radarChart" width="320" height="320" style="margin:1.2rem auto 0 auto;display:block;"></canvas>
       <div class="style-desc">${getStyleDesc()}</div>
