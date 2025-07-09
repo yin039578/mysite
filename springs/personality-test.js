@@ -58,10 +58,12 @@ function render() {
   const app = document.getElementById('app');
   if (state.page === 'start') {
     app.innerHTML = `
-      <div class="title">個人風格心理測驗</div>
-      <div class="desc">只需 5 分鐘，了解你的行事風格與優缺點！</div>
-      <div class="actions">
-        <button class="btn" onclick="startTest()">開始測驗</button>
+      <div class="start-page" style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:400px;">
+        <div class="title">個人風格心理測驗</div>
+        <div class="desc">只需 5 分鐘，了解你的行事風格與優缺點！</div>
+        <div class="actions">
+          <button class="btn" onclick="startTest()">開始測驗</button>
+        </div>
       </div>
     `;
   } else if (state.page === 'question') {
@@ -75,7 +77,7 @@ function render() {
     app.innerHTML = `
       <div class="title">第 ${state.qIndex + 1} 題</div>
       <div class="question">請選出 <span style="color:#ff9800;font-weight:bold;">${selectNum}</span> 個與你較符合的項目</div>
-      <div class="options">
+      <div class="options" style="width:100%;max-width:700px;margin:0 auto;">
         ${q.map((text, i) => {
           const selectedArr = state.selected[state.qIndex][state.subStep] || [];
           const checked = selectedArr.includes(i);
@@ -88,8 +90,8 @@ function render() {
             disabled = true;
           }
           return `
-            <label class="option${checked ? ' selected' : ''}${disabled ? ' option-disabled' : ''}" style="${faded ? 'opacity:0.4;pointer-events:none;' : ''}" onclick="${disabled ? '' : `toggleOption(${i})`}">
-              <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="toggleOption(${i})" onclick="event.stopPropagation()">
+            <label class="option${checked ? ' selected' : ''}${disabled ? ' option-disabled' : ''}" style="${faded ? 'opacity:0.4;pointer-events:none;' : ''};margin-bottom:0.2rem;position:relative;" onclick="${disabled ? '' : `toggleOption(${i})`}">
+              <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="toggleOption(${i})" onclick="event.stopPropagation()" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
               ${text}
             </label>
           `;
@@ -103,17 +105,23 @@ function render() {
   } else if (state.page === 'result') {
     const { R, I, O, F } = state.score;
     app.innerHTML = `
-      <div class="title">測驗結果</div>
-      <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: space-between;">
-        <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 25%; min-width: 0; text-align: center;">理智型：${R}</div>
-        <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 25%; min-width: 0; text-align: center;">開創型：${I}</div>
-        <div class="score-item" style="color:${styleDesc[2].color}; flex: 1 1 25%; min-width: 0; text-align: center;">組織型：${O}</div>
-        <div class="score-item" style="color:${styleDesc[1].color}; flex: 1 1 25%; min-width: 0; text-align: center;">情感型：${F}</div>
-      </div>
-      <canvas id="radarChart" width="320" height="320" style="margin:1.2rem auto 0 auto;display:block;"></canvas>
-      <div class="style-desc">${getStyleDesc()}</div>
-      <div class="actions">
-        <button class="btn" onclick="restart()">重新測驗</button>
+      <div class="result">
+        <div class="result-left">
+          <div class="title">測驗結果</div>
+          <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: center;">
+            <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">理智型：${R}</div>
+            <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">開創型：${I}</div>
+            <div class="score-item" style="color:${styleDesc[2].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">組織型：${O}</div>
+            <div class="score-item" style="color:${styleDesc[1].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">情感型：${F}</div>
+          </div>
+          <canvas id="radarChart" width="320" height="320" style="margin:1.2rem auto 0 auto;display:block;"></canvas>
+        </div>
+        <div class="result-right">
+          <div class="style-desc">${getStyleDesc()}</div>
+          <div class="actions">
+            <button class="btn" onclick="restart()">重新測驗</button>
+          </div>
+        </div>
       </div>
     `;
     setTimeout(drawRadar, 0);

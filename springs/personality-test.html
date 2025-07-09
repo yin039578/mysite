@@ -199,6 +199,50 @@
         padding: 0.5rem 0.1rem;
       }
     }
+    @media (min-width: 800px) {
+      .container {
+        max-width: 900px;
+        min-height: 600px;
+        min-width: 600px;
+        padding: 2.5rem 2rem 2.5rem 2rem;
+        gap: 2.5rem;
+        box-sizing: border-box;
+        justify-content: center;
+      }
+      .title {
+        font-size: 2.1rem;
+        margin-bottom: 1.2rem;
+      }
+      .question {
+        font-size: 1.3rem;
+        margin-bottom: 1.2rem;
+      }
+      .options {
+        flex-wrap: wrap;
+        gap: 1.2rem 2.5rem;
+        justify-content: flex-start;
+        margin-bottom: 1.5rem;
+      }
+      .option {
+        flex: 1 1 40%;
+        min-width: 220px;
+        max-width: 350px;
+        font-size: 1.13rem;
+        padding: 1.1rem 1rem;
+        margin-bottom: 0.2rem;
+      }
+      .actions {
+        margin-top: 2.2rem;
+        justify-content: flex-end;
+      }
+      .desc {
+        font-size: 1.08rem;
+        margin-bottom: 0.5rem;
+      }
+      .container {
+        transition: min-height 0.2s;
+      }
+    }
   </style>
 </head>
 <body>
