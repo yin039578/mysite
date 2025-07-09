@@ -157,20 +157,37 @@ function nextStep() {
     alert(`請選擇 ${selectNum} 個項目`);
     return;
   }
-  // 計分
-  selectedItems.forEach(idx => {
-    const key = answerMap[state.qIndex][idx];
-    state.score[key]++;
-  });
+  // 只在每題三輪結束後計分
   if (state.subStep < 2) {
     state.subStep++;
+    render();
   } else {
+    // 三輪都選完，計分
+    const points = [1, 2, 2];
+    for (let s = 0; s < 3; s++) {
+      const arr = state.selected[state.qIndex][s] || [];
+      arr.forEach(idx => {
+        const key = answerMap[state.qIndex][idx];
+        state.score[key] += points[s];
+      });
+    }
     state.qIndex++;
     state.subStep = 0;
+    if (state.qIndex === questions.length) {
+      state.page = 'result';
+    }
+    render();
   }
-  if (state.qIndex === questions.length) {
-    state.page = 'result';
-  }
+}
+
+function restart() {
+  state = {
+    page: 'start',
+    qIndex: 0,
+    subStep: 0,
+    selected: [[], [], [], [], []],
+    score: { R: 0, I: 0, O: 0, F: 0 }
+  };
   render();
 }
 
