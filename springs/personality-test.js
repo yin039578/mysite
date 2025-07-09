@@ -79,16 +79,17 @@ function render() {
         ${q.map((text, i) => {
           const selectedArr = state.selected[state.qIndex][state.subStep] || [];
           const checked = selectedArr.includes(i);
-          // 只有第一輪可全選，第二、三輪只能從上一輪已選的選
-          let disabled = '';
+          let disabled = false;
+          let faded = false;
           if (state.subStep > 0 && !prevSelected.includes(i)) {
-            disabled = 'disabled';
+            disabled = true;
+            faded = true;
           } else if (!checked && selectedArr.length >= selectNum) {
-            disabled = 'disabled';
+            disabled = true;
           }
           return `
-            <label class="option${checked ? ' selected' : ''}${disabled ? ' option-disabled' : ''}" onclick="${disabled ? '' : `toggleOption(${i})`}">
-              <input type="checkbox" ${checked ? 'checked' : ''} ${disabled} onchange="toggleOption(${i})" onclick="event.stopPropagation()">
+            <label class="option${checked ? ' selected' : ''}${disabled ? ' option-disabled' : ''}" style="${faded ? 'opacity:0.4;pointer-events:none;' : ''}" onclick="${disabled ? '' : `toggleOption(${i})`}">
+              <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="toggleOption(${i})" onclick="event.stopPropagation()">
               ${text}
             </label>
           `;
