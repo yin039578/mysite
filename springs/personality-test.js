@@ -60,7 +60,7 @@ function render() {
     app.innerHTML = `
       <div class="start-page" style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:400px;">
         <div class="title">個人風格心理測驗</div>
-        <div class="desc">只需 5 分鐘，了解你的行事風格與優缺點！</div>
+        <div class="desc">從按照每個題組前的指示，從您日常的工作、生活、學習….經驗，依序挑選出讓您覺得來勁忘我、如魚得水、心想事成、欲罷不能的工作要素。</div>
         <div class="actions">
           <button class="btn" onclick="startTest()">開始測驗</button>
         </div>
@@ -78,7 +78,7 @@ function render() {
     app.innerHTML = `
       <div class="progress-bar-wrap"><div class="progress-bar" style="width:${progress}%;"></div></div>
       <div class="title">第 ${state.qIndex + 1} 題</div>
-      <div class="question">請選出 <span style="color:#ff9800;font-weight:bold;">${selectNum}</span> 個與你較符合的項目</div>
+      <div class="question">請先從以下<span style="color:#ff9800;font-weight:bold;">${selectNum}個</span>選項中，挑選出 4個 讓您覺得來勁忘我、如魚得水、心想事成、欲罷不能的工作要素。</div>
       <div class="options" style="width:100%;max-width:700px;margin:0 auto;">
         ${q.map((text, i) => {
           const selectedArr = state.selected[state.qIndex][state.subStep] || [];
@@ -109,7 +109,7 @@ function render() {
     app.innerHTML = `
       <div class="result">
         <div class="result-left">
-          <div class="title">測驗結果</div>
+          <div class="title">個人風格檢核結果</div>
           <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: center;">
             <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">理智型：${R}</div>
             <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">開創型：${I}</div>
