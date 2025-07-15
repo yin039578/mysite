@@ -118,8 +118,9 @@ function render() {
         <div class="style-feature-block" style="max-width:480px;margin:2rem auto 1.2rem auto;padding:1.2rem 1.5rem;background:#f8fafc;border-radius:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
           ${getFeatureDesc()}
         </div>
-        <div class="actions" style="margin-top:1.5rem;">
+        <div class="actions" style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:center;">
           <button class="btn" onclick="restart()">重新測驗</button>
+          <button class="btn" onclick="shareResultUrl()">分享結果</button>
         </div>
       </div>
     `;
@@ -188,6 +189,11 @@ function nextStep() {
 }
 
 function restart() {
+  // 清空網址 query
+  if (window.history && window.history.replaceState) {
+    const cleanUrl = location.origin + location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
   state = {
     page: 'start',
     qIndex: 0,
@@ -254,5 +260,38 @@ function getFeatureDesc() {
     </div>
   `;
 }
+
+function getQueryScores() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const R = parseInt(urlParams.get('R'));
+  const I = parseInt(urlParams.get('I'));
+  const O = parseInt(urlParams.get('O'));
+  const F = parseInt(urlParams.get('F'));
+  return {
+    R: isNaN(R) ? 0 : R,
+    I: isNaN(I) ? 0 : I,
+    O: isNaN(O) ? 0 : O,
+    F: isNaN(F) ? 0 : F
+  };
+}
+
+function shareResultUrl() {
+  const { R, I, O, F } = state.score;
+  const url = `${location.origin}${location.pathname}?R=${R}&I=${I}&O=${O}&F=${F}`;
+  navigator.clipboard.writeText(url);
+  alert('已複製分享連結！');
+}
+
+// 檢查是否有Query分數，若有直接進結果頁
+window.addEventListener('DOMContentLoaded', () => {
+  const queryScore = getQueryScores();
+  if (queryScore.R || queryScore.I || queryScore.O || queryScore.F) {
+    state.page = 'result';
+    state.score = queryScore;
+    render();
+  } else {
+    render();
+  }
+});
 
 render();
