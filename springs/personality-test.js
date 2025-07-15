@@ -69,12 +69,14 @@ function render() {
   } else if (state.page === 'question') {
     const q = questions[state.qIndex];
     const selectNum = stepSelectNum[state.subStep];
-    // 取得前一輪已選的index
     let prevSelected = [];
     if (state.subStep > 0) {
       prevSelected = state.selected[state.qIndex][state.subStep - 1] || [];
     }
+    // 進度條
+    const progress = Math.round(((state.qIndex * 3 + state.subStep + 1) / (questions.length * 3)) * 100);
     app.innerHTML = `
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${progress}%;"></div></div>
       <div class="title">第 ${state.qIndex + 1} 題</div>
       <div class="question">請選出 <span style="color:#ff9800;font-weight:bold;">${selectNum}</span> 個與你較符合的項目</div>
       <div class="options" style="width:100%;max-width:700px;margin:0 auto;">
@@ -118,7 +120,7 @@ function render() {
         </div>
         <div class="result-right">
           <div class="style-desc">${getStyleDesc()}</div>
-          <div class="actions">
+          <div class="actions" style="margin-top:1.5rem;">
             <button class="btn" onclick="restart()">重新測驗</button>
           </div>
         </div>
