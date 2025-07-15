@@ -11,27 +11,27 @@ const questions = [
 
 const styleDesc = [
   {
-    name: "開創型",
+    name: "開創",
     key: "I",
-    color: "#ff9800",
+    color: "#ff9800", // 橘色
     desc: "想法鮮活多變，勇於嘗試，強調創新與嘗試。優點：創意思考、勇於嘗試。缺點：天馬行空、不切實際。"
   },
   {
-    name: "情感型",
+    name: "情感",
     key: "F",
-    color: "#e57373",
+    color: "#e57373", // 紅色
     desc: "人際互動特質強，樂於助人，強調團隊和諧。優點：關懷可親、樂於助人。缺點：感情用事、優柔寡斷。"
   },
   {
-    name: "組織型",
+    name: "組織",
     key: "O",
-    color: "#64b5f6",
+    color: "#81c784", // 綠色
     desc: "事務管理特質強，強調按部就班，謹慎可靠。優點：組織條理、按部就班。缺點：較少彈性、不愛變通。"
   },
   {
-    name: "理智型",
+    name: "理智",
     key: "R",
-    color: "#81c784",
+    color: "#64b5f6", // 藍色
     desc: "邏輯分析特質強，重視證據、數據，追根究底。優點：邏輯分析、就事論事。缺點：義正嚴辭、心直口快。"
   }
 ];
@@ -108,25 +108,21 @@ function render() {
     const { R, I, O, F } = state.score;
     app.innerHTML = `
       <div class="result">
-        <div class="result-left">
-          <div class="title">個人風格檢核結果</div>
-          <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: center;">
-            <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">理智型：${R}</div>
-            <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">開創型：${I}</div>
-            <div class="score-item" style="color:${styleDesc[2].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">組織型：${O}</div>
-            <div class="score-item" style="color:${styleDesc[1].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">情感型：${F}</div>
-          </div>
-          <canvas id="radarChart" width="320" height="320" style="margin:1.2rem auto 0 auto;display:block;"></canvas>
+        <div class="title">個人風格檢核結果</div>
+        <div class="score-list" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.2rem 0 0.5rem 0; width: 100%; justify-content: center;">
+          <div class="score-item" style="color:${styleDesc[3].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">${styleDesc[3].name}：<span style='color:${styleDesc[3].color}'>${R}</span></div>
+          <div class="score-item" style="color:${styleDesc[0].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">${styleDesc[0].name}：<span style='color:${styleDesc[0].color}'>${I}</span></div>
+          <div class="score-item" style="color:${styleDesc[2].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">${styleDesc[2].name}：<span style='color:${styleDesc[2].color}'>${O}</span></div>
+          <div class="score-item" style="color:${styleDesc[1].color}; flex: 1 1 40%; min-width: 180px; max-width: 260px; text-align: center;">${styleDesc[1].name}：<span style='color:${styleDesc[1].color}'>${F}</span></div>
         </div>
-        <div class="result-right">
-          <div class="style-desc">${getStyleDesc()}</div>
-          <div class="actions" style="margin-top:1.5rem;">
-            <button class="btn" onclick="restart()">重新測驗</button>
-          </div>
+        <div class="style-feature-block" style="max-width:480px;margin:2rem auto 1.2rem auto;padding:1.2rem 1.5rem;background:#f8fafc;border-radius:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+          ${getFeatureDesc()}
+        </div>
+        <div class="actions" style="margin-top:1.5rem;">
+          <button class="btn" onclick="restart()">重新測驗</button>
         </div>
       </div>
     `;
-    setTimeout(drawRadar, 0);
   }
 }
 
@@ -202,75 +198,61 @@ function restart() {
   render();
 }
 
-function getStyleDesc() {
+function getFeatureDesc() {
+  // 依分數最高型別顯示特點描述
   const { R, I, O, F } = state.score;
-  const total = R + I + O + F;
-  const percent = (num) => {
-    return total === 0 ? 0 : Math.round((num / total) * 100);
-  };
   const styleList = [
-    { ...styleDesc[3], value: R },
-    { ...styleDesc[0], value: I },
-    { ...styleDesc[2], value: O },
-    { ...styleDesc[1], value: F }
+    {
+      key: 'R',
+      name: '理智型風格',
+      color: styleDesc[3].color,
+      feature: {
+        behavior: '邏輯分析特質強，重視證據、數據，追根究底。',
+        advantage: '邏輯分析、就事論事。',
+        disadvantage: '義正嚴辭、心直口快。'
+      }
+    },
+    {
+      key: 'I',
+      name: '開創型風格',
+      color: styleDesc[0].color,
+      feature: {
+        behavior: '想法鮮活多變，勇於嘗試，強調創新與嘗試。',
+        advantage: '創意思考、勇於嘗試。',
+        disadvantage: '天馬行空、不切實際。'
+      }
+    },
+    {
+      key: 'O',
+      name: '組織型風格',
+      color: styleDesc[2].color,
+      feature: {
+        behavior: '事務管理特質強，強調按部就班，謹慎可靠。',
+        advantage: '組織條理、按部就班。',
+        disadvantage: '較少彈性、不愛變通。'
+      }
+    },
+    {
+      key: 'F',
+      name: '情感型風格',
+      color: styleDesc[1].color,
+      feature: {
+        behavior: '人際互動特質強，樂於助人，強調團隊和諧。',
+        advantage: '關懷可親、樂於助人。',
+        disadvantage: '感情用事、優柔寡斷。'
+      }
+    }
   ];
+  const maxType = ['R','I','O','F'].reduce((a,b) => state.score[a] >= state.score[b] ? a : b);
+  const style = styleList.find(s => s.key === maxType);
   return `
-    <div style="margin:1.2rem 0 0.5rem 0;display:flex;flex-direction:column;gap:0.7rem;">
-      ${styleList.map(s => `
-        <div style="display:flex;align-items:center;gap:0.7rem;">
-          <span style="min-width:60px;font-weight:bold;font-size:1.08rem;color:${s.color}">${s.name}</span>
-          <div style="flex:1;background:#f0f0f0;border-radius:0.6rem;height:1.1rem;overflow:hidden;margin:0 0.3rem;">
-            <div style="height:100%;border-radius:0.6rem;transition:width 0.5s;width:${percent(s.value)}%;background:${s.color};"></div>
-          </div>
-          <span style="min-width:38px;text-align:right;font-size:1.05rem;font-weight:bold;color:#333;">${percent(s.value)}%</span>
-        </div>
-      `).join('')}
-    </div>
-    <div style="margin-top:1.2rem;font-size:1rem;color:#444;text-align:left;">
-      ${styleList.filter(s => s.value === Math.max(R, I, O, F)).map(s => `<b style=\"color:${s.color}\">${s.name}</b>：${s.desc}`).join('<br>')}
+    <div style="color:${style.color};">
+      <div style="font-weight:bold;font-size:1.18rem;margin-bottom:0.7rem;">${style.name}</div>
+      <div style="margin-bottom:0.4rem;"><span style="font-weight:bold;">行為展現：</span>${style.feature.behavior}</div>
+      <div style="margin-bottom:0.4rem;"><span style="font-weight:bold;">優勢特質：</span>${style.feature.advantage}</div>
+      <div><span style="font-weight:bold;">可能缺點：</span>${style.feature.disadvantage}</div>
     </div>
   `;
 }
-
-function drawRadar() {
-  const ctx = document.getElementById('radarChart').getContext('2d');
-  const { R, I, O, F } = state.score;
-  // 避免全為 0，否則 Chart.js 會出錯
-  const allZero = (R === 0 && I === 0 && O === 0 && F === 0);
-  const dataArr = allZero ? [1, 1, 1, 1] : [R, I, O, F];
-  // 最大值自動調整，最小 4，最大 24
-  const maxScore = Math.max(4, Math.max(R, I, O, F), 24);
-  if (window.radarChartObj) window.radarChartObj.destroy && window.radarChartObj.destroy();
-  window.radarChartObj = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: ['理智型', '開創型', '組織型', '情感型'],
-      datasets: [{
-        label: '個人風格',
-        data: dataArr,
-        backgroundColor: 'rgba(255,152,0,0.15)',
-        borderColor: '#ff9800',
-        pointBackgroundColor: ['#81c784','#ff9800','#64b5f6','#e57373'],
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        r: {
-          min: 0,
-          max: maxScore,
-          ticks: { stepSize: 4, color: '#888', font: { size: 12 } },
-          pointLabels: { color: '#333', font: { size: 14 } }
-        }
-      }
-    }
-  });
-}
-
-// 移除 JS 檔案中的 CSS 樣式區塊，只保留 JS 程式碼
 
 render();
