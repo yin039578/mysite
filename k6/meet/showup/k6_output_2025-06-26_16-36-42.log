@@ -1,0 +1,29 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: showup_v1.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 1h0m30s max duration (incl. graceful stop):
+              * test: 5000 iterations for each of 1 VUs (maxDuration: 1h0m0s, gracefulStop: 30s)
+
+time="2025-06-26T16:36:42+08:00" level=info msg="queryPayload {\"verify_code_id\":\"c67d47d8-e189-4404-a27f-50e93e6922c7\",\"support_id\":\"0b5182d6-9dc9-4529-8a16-c14b6f0c47c0\",\"enable_check_showup\":1}" source=console
+
+running (0h00m01.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 1 VUs  0h00m01.0s/1h0m0s  0000/5000 iters, 5000 per VU
+
+running (0h00m02.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 1 VUs  0h00m02.0s/1h0m0s  0000/5000 iters, 5000 per VU
+time="2025-06-26T16:36:44+08:00" level=info msg="CSV_LINE:batch2001@batch.com.tw,測二零零一,273824,1,20250626 16:36:42,447.92,251.93," source=console
+
+running (0h00m03.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+test   [   0% ] 1 VUs  0h00m03.0s/1h0m0s  0000/5000 iters, 5000 per VU
+time="2025-06-26T16:36:45+08:00" level=info msg="queryPayload {\"verify_code_id\":\"bb46a369-b88b-4bc3-acbb-28ab7bff3657\",\"support_id\":\"0b5182d6-9dc9-4529-8a16-c14b6f0c47c0\",\"enable_check_showup\":1}" source=console
+
+running (0h00m04.0s), 1/1 VUs, 1 complete and 0 interrupted iterations
+test   [   0% ] 1 VUs  0h00m04.0s/1h0m0s  0001/5000 iters, 5000 per VU

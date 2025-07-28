@@ -6,9 +6,9 @@ import { SharedArray } from "k6/data";
 
 // —— 統一設定區 —— 
 const CONFIG = {
-  vus: 70,                          // 併發數
-  maxDuration: "10m",               // 最長執行時間
-  support_id: "a62321ce-7132-4b69-9974-88deb87ffc94", // 固定支援 ID
+  vus: 30,                          // 併發數
+  maxDuration: "60m",               // 最長執行時間
+  support_id: "0b5182d6-9dc9-4529-8a16-c14b6f0c47c0", // 固定支援 ID
 };
 
 // —— 動態讀取 CSV header 並產生物件 ——
@@ -98,6 +98,7 @@ export default function () {
     support_id: CONFIG.support_id,
     enable_check_showup: 1,
   });
+  console.log('queryPayload',queryPayload);
   const queryRes = http.post(
     "https://api.meet.104dc-dev.com/api/event/verify_showup",
     queryPayload,

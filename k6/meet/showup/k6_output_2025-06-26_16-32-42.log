@@ -1,0 +1,44 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: showup_v1.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 1h0m30s max duration (incl. graceful stop):
+              * test: 5000 iterations for each of 1 VUs (maxDuration: 1h0m0s, gracefulStop: 30s)
+
+time="2025-06-26T16:32:42+08:00" level=info msg="queryPayload {\"verify_code_id\":\"c67d47d8-e189-4404-a27f-50e93e6922c7\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch2001@batch.com.tw,測二零零一,273824,N/A,20250626 16:32:42,93.86,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"bb46a369-b88b-4bc3-acbb-28ab7bff3657\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch2501@batch.com.tw,測二五零一,274324,N/A,20250626 16:32:43,98.21,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"9d3881a7-7b2a-44d8-9d0f-7f18001c4a99\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch4501@batch.com.tw,測四五零一,276324,N/A,20250626 16:32:43,92.62,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"cf534d88-e726-490e-9724-529a59e35694\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch1501@batch.com.tw,測一五零一,273324,N/A,20250626 16:32:43,86.84,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"4b42dcfa-a2ae-45f5-a961-f9b9b7d727a7\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch3501@batch.com.tw,測三五零一,275324,N/A,20250626 16:32:43,90.77,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"406447a9-bd24-4d94-901d-d9b7bf63e135\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch4001@batch.com.tw,測四零零一,275824,N/A,20250626 16:32:43,108.72,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"12723065-af76-4722-9943-dbf25e6914fd\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="CSV_LINE:batch3001@batch.com.tw,測三零零一,274824,N/A,20250626 16:32:43,130.97,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:43+08:00" level=info msg="queryPayload {\"verify_code_id\":\"487bdfa5-e1e1-4725-81aa-bb9c3949f01a\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+
+running (0h00m01.0s), 1/1 VUs, 7 complete and 0 interrupted iterations
+test   [   0% ] 1 VUs  0h00m01.0s/1h0m0s  0007/5000 iters, 5000 per VU
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch0001@batch.com.tw,測零零零一,270715,N/A,20250626 16:32:43,137.92,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"2e827747-0d27-4d55-b035-6e04de2cd660\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch1001@batch.com.tw,測一零零一,272824,N/A,20250626 16:32:44,169.99,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"d15d6e87-65f5-42f6-9ac3-0eb9552c4164\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch0501@batch.com.tw,測零五零一,272324,N/A,20250626 16:32:44,172.70,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"7c640930-ecc7-4f22-affa-19b353fdc3fa\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch2002@batch.com.tw,測二零零二,273825,N/A,20250626 16:32:44,125.53,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"7787dd6d-1b5a-4478-b791-e099b3b6364f\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch2502@batch.com.tw,測二五零二,274325,N/A,20250626 16:32:44,86.05,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"e4d6a305-42ba-40b5-9adf-7ff5576b5f4e\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="CSV_LINE:batch4502@batch.com.tw,測四五零二,276325,N/A,20250626 16:32:44,82.96,N/A,\"query API HTTP 500\"" source=console
+time="2025-06-26T16:32:44+08:00" level=info msg="queryPayload {\"verify_code_id\":\"ad91d320-e246-43d7-8dc9-3b3649043faf\",\"support_id\":\"19ef6b7f-2df5-4043-aea0-b8998eae283b\",\"enable_check_showup\":1}" source=console
