@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>還原 SQL (SQL + params)</title>
+  <style>
+    body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding:20px; background:#f7fafc}
+    textarea{width:100%;height:140px;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box}
+    .row{margin-bottom:12px}
+    button{padding:8px 12px;border-radius:6px;border:0;background:#0366d6;color:#fff}
+    pre{background:#fff;padding:12px;border-radius:6px;border:1px solid #e6e6e6;white-space:pre-wrap;word-break:break-word}
+    .hint{color:#666;font-size:13px}
+  </style>
+</head>
+<body>
+  <h2>還原 SQL</h2>
+  <p class="hint">貼上 SQL log（含占位符，例如 %(coupon_id_1)s）與對應的參數（JSON 或 Python dict 形式），按下「還原」會回傳帶實際值的 SQL。</p>
+
+  <div class="row">
+    <label>SQL 模板：</label>
+    <textarea id="sql">SELECT nabi_coupon.coupon_id AS nabi_coupon_coupon_id, nabi_coupon.coupon_code AS nabi_coupon_coupon_code
+FROM nabi_coupon
+WHERE nabi_coupon.coupon_id = %(coupon_id_1)s</textarea>
+  </div>
+
+  <div class="row">
+    <label>參數（JSON 或 Python dict，例如 {'coupon_id_1': 'ab825...'} 或 {"coupon_id_1": "..."}）：</label>
+    <textarea id="params">{'coupon_id_1': 'ab825cf3-2c22-4abf-9169-205630a95838'}</textarea>
+  </div>
+
+  <div class="row">
+    <button id="run">還原</button>
+    <button id="copy">複製結果</button>
+  </div>
+
+  <div class="row">
+    <label>還原後的 SQL：</label>
+    <pre id="output">-</pre>
+  </div>
+
+  <script>
+    function tryParseParams(text){
+      // 先嘗試 JSON
+      try{ return JSON.parse(text); }catch(e){}
+
+      // 轉換 Python dict 樣式到 JSON 樣式的簡單處理
+      let s = text.trim();
+      // 把 None/True/False 轉成 null/true/false
+      s = s.replace(/\bNone\b/g, 'null');
+      s = s.replace(/\bTrue\b/g, 'true');
+      s = s.replace(/\bFalse\b/g, 'false');
+
+      // 把 datetime.datetime(...) 直接改成字串 (保留內部內容)
+      s = s.replace(/datetime\.datetime\(([^)]+)\)/g, function(_, inner){
+        // 嘗試把參數轉成可讀的 ISO-like 字串
+        try{
+          // 期望格式: YYYY, M, D, H, m, s, micro
+          var parts = inner.split(',').map(p=>p.trim());
+          var Y = parts[0], M = parts[1] || '1', D = parts[2] || '1';
+          var H = parts[3]||'0', m = parts[4]||'0', s2 = parts[5]||'0', micro = parts[6]||'0';
+          var ms = Math.floor(parseInt(micro)/1000);
+          var iso = [Y.padStart(4,'0'), ('0'+M).slice(-2), ('0'+D).slice(-2)].join('-') + 'T' + ('0'+H).slice(-2)+':' + ('0'+m).slice(-2)+':' + ('0'+s2).slice(-2) + '.' + (ms+'');
+          return '"' + iso + '"';
+        }catch(err){
+          return '"'+inner+'"';
+        }
+      });
+
+      // 把單引號包的字串改為雙引號
+      // 此 regex 會簡單處理最常見情況：'...'
+      s = s.replace(/'([^']*)'/g, function(_, inner){
+        // 將內部的雙引號 escape
+        return '"' + inner.replace(/\\"/g,'\\\"') + '"';
+      });
+
+      // 再嘗試 JSON 解析
+      try{ return JSON.parse(s); }catch(e){
+        throw new Error('參數解析失敗：請確認是 JSON 或 Python dict 格式；錯誤: '+ e.message);
+      }
+    }
+
+    function formatValueForSql(v){
+      if(v === null) return 'NULL';
+      if(typeof v === 'number') return String(v);
+      if(typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+      // 如果是物件或陣列, JSON stringify 並加單引號
+      if(typeof v === 'object'){
+        let s = JSON.stringify(v);
+        s = s.replace(/'/g, "''");
+        return "'"+s+"'";
+      }
+      // 字串: escape 單引號並以單引號包起來
+      let s = String(v).replace(/'/g, "''");
+      return "'" + s + "'";
+    }
+
+    function restoreSql(sqlTemplate, params){
+      let out = sqlTemplate;
+      // 找到所有 %(key)s 形式
+      // 使用 global regex
+      out = out.replace(/%\(([^)]+)\)s/g, function(match, key){
+        if(params.hasOwnProperty(key)){
+          return formatValueForSql(params[key]);
+        }else{
+          // 若找不到參數就保留原樣並以 /*missing:key*/ 註記
+          return match + " /*missing:"+key+"*/";
+        }
+      });
+      return out;
+    }
+
+    document.getElementById('run').addEventListener('click', function(){
+      var sql = document.getElementById('sql').value;
+      var paramsText = document.getElementById('params').value;
+      try{
+        var params = tryParseParams(paramsText);
+        var restored = restoreSql(sql, params);
+        document.getElementById('output').textContent = restored;
+      }catch(err){
+        document.getElementById('output').textContent = '錯誤: ' + err.message;
+      }
+    });
+
+    document.getElementById('copy').addEventListener('click', function(){
+      var out = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(out).then(function(){
+        alert('已複製到剪貼簿');
+      }, function(){ alert('複製失敗'); });
+    });
+  </script>
+</body>
+</html>
