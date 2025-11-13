@@ -1,3 +1,75 @@
+# Nabi copilot-instructions 編輯優化 
+
+
+# 新創AI 9/23 落地分享
+vscode + copilot-instructions.md
+
+---
+
+## 產出instructions
+
+``` mermaid 
+flowchart TD
+    A[AI爬梳專案產出instructions] --> B[人工 修改錯誤]
+    B --> C[AI 優化instructions ]
+    C --> B
+    C --> D{無特別改善}
+    D -->|換AI模型| C
+```
+
+---
+
+## 有幫助的
+
+1. 專注提供產品邏輯
+2. AI對話session會比較乾淨，降低閱讀認知負擔
+3. 能快速產出會跑可以通過測試的程式碼
+4. 可以不斷把規則補進去文件，增加完整性
+
+---
+
+## 能跑不等於完成
+
+1. 程式風格不符合造成閱讀負擔
+2. 命名與註解說明的慣用形式不同，顯得格格不入
+3. 對產出結果不容易量化評估，instructions優化評價都是體感
+
+---
+
+## 緩慢成長中
+
+1. 試著增加更多細節規範，讓他符合團隊慣例或是方式
+2. 決定這份文件與形式的是我們，要自身養成良好習慣與判斷能力
+
+---
+
+## 額外加碼
+讓你commit message的AI也能更聰明(?
+copilot-commit-message-instructions.md
+``` json
+vscode:settings.json
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "file": ".github/copilot-commit-message-instructions.md"
+        }
+    ],
+```
+
+---
+
+## 感想
+
+1. 能快速給你一個列表，看到這次異動的內容，但沒有周全
+2. 目前還在該功能在copilotc還在實驗階段
+3. 給他精確的prompt他未必會遵守
+
+---
+
+# 以上！沒落地分享
+
+---
+
+``````
 # 專案編碼規範
 
 本文件概述了 104-nabi-classroom-api 專案中使用的編碼標準和模式。
@@ -6,24 +78,8 @@
 
 104-nabi-classroom-api 是一個提供線上課程、學員管理、金流串接與社群互動功能的教學平台後端 API。其核心業務是為企業和個人提供一個穩定、高效的線上學習環境。在開發時，請時刻考量此業務目標。
 
-## 程式碼風格要求
-嚴格遵循 PEP8 規範：
-
-縮排：4 個空格，絕對不用 tab
-命名：函式、變數用 snake_case，類別用 PascalCase
-行長度：每行最多 79 字元
-Import 排序：標準庫 → 第三方套件 → 本地模組，各組間空行分隔
-註解：適度加註解，保持程式碼可讀性
-空行：函式間 2 行，方法間 1 行
-程式碼品質原則：
-
-保持風格一致性
-撰寫簡潔易懂的程式碼
-適當使用型別標註（Type Hints）
-遵循專案既有的分層架構模式
-
 ## 重要原則
-1. 我們的對話設使用繁體中文;你產出的文件與對外說明預設使用繁體中文；程式語法與變數命名一律英文；技術名詞（如 status、error code、HTTP、JWT 等）與日誌訊息可依現有 pattern 使用英文或中英混用，但同一模型/檔案內風格需一致。
+1. 文件、討論與對外說明預設使用繁體中文；程式語法與變數命名一律英文；技術名詞（如 status、error code、HTTP、JWT 等）與日誌訊息可依現有 pattern 使用英文或中英混用，但同一模型/檔案內風格需一致。
 2. 修改時請遵循現有的程式碼風格和結構
 3. 多數時候應該都不需要另外建立新檔案，若有相關規劃先確認後再執行
 4. 除非需求描述足夠完整（包含輸入/輸出模型、業務邏輯流程、錯誤處理案例），否則一律先進行討論待確認後再執行。若描述不足，請提出具體缺失點（如'缺少業務邏輯流程'）後討論。
@@ -31,11 +87,10 @@ Import 排序：標準庫 → 第三方套件 → 本地模組，各組間空行
 6. 引用與使用的lib要參考相同module內的檔案優先，若沒有可以參考其他module相同檔名的檔案，例如a module的action.py需要log，可以先去看其他module的action裡log的做法
 7. 務必檢查是否存在，避免無效引用
 8. 函式呼叫務必指定型別，避免使用dict物件呼叫，造成不易維護與理解
-9. 不需要回傳的函式預設使用 return，看是否需要把狀態回給呼叫端，決定是否要用 bool 或是其他型別回傳
+9. 不需要回傳的函式預設使用 return True
 10. 函式呼叫時，若是參數數量超過四個，請使用關鍵字參數方式呼叫
 11. 組字串使用f""，不要使用format function
 12. 函式不用特別用 -> 說明回傳參數
-
 
 ## 版本與相容性前提
 - 依據：所有套件版本以 `pyproject.toml` 為唯一權威；以下內容為閱讀便利的快照，實際仍以檔案為準。
@@ -99,7 +154,6 @@ Import 排序：標準庫 → 第三方套件 → 本地模組，各組間空行
 4. 每個 business domain 為一個 package（例如 `api_course/`, `api_user/`）。
 5. 共用工具放在 `components/`（utils、auth、exceptions 等）。
 6. 外部services 放在 `services/`（像 emails、cache、external adapters）。
-7. 呼叫鏈 views -> actions -> tasks -> service 或 views -> actions -> service，禁止同層呼叫(如action呼叫action)或反向呼叫(service呼叫action)，遇到需要action呼叫action的情境代表可能要抽出共用放service請提出討論
 
 ## API開發結構
 
@@ -107,15 +161,13 @@ Import 排序：標準庫 → 第三方套件 → 本地模組，各組間空行
 
 1. 使用符合FastAPI規則的路由模式
 2. 所有 API 路由應組織在各自模組資料夾中的 `views.py` 檔案中
-3. 每個 API 路由都必須具有：
+3. 每個 API 路由都應具有：
    - 使用 `name` 參數的中文描述性名稱
    - 使用 `description` 參數的詳細說明
    - 使用 `SuccessModel[T]` 的適當回應模型，其中 T 是輸出模型
    - 可選參數應使用 `Optional[T]` 類型提示
 4. path使用snake_case
 5. 若是查詢單筆資料，為處理查無資料狀態，可用`SuccessModel[Optional[OutModel]]`這樣當action回傳None api會回應null
-6. 輸入檢查與限制優先使用 Pydantic 模型來驗證，需要複雜或商務規則才到 action 處理
-7. get method也請用fastapi Path來驗證query與param參數，如：Path(default=..., title="ddb 使用者 ID")
 
 範例：
 ```python
@@ -159,14 +211,13 @@ process_long_task.send(data)
 
 1. `views.py` 中的路由處理應保持精簡，並將業務邏輯委託給 `actions.py`
 2. `actions.py`實現邏輯時，務必參考相同檔案裡其他內容，看是否有函式可以引用，或是相同的開發 pattern 可以模仿，另外有時共用的函式可能在相同模組或是其他模組的`service.py`。例如，開發`api_course/actions.py` 時可以使用 `api_course/service.py` 或 `api_user/service.py` 的共用函式。
-3. 所有資料庫操作都應在 `actions.py`或`service.py`中
+3. 所有資料庫操作都應在 `actions.py` 中
 4. 使用 `@inject_db` 裝飾器處理資料庫會話，函式包含寫入時使用 `DBName.DEFAULT`，純查詢時使用 `DBName.READ_ONLY`
-5. `service.py`為共用的邏輯，不注入資料庫會話，若需要則應由驅動的 `actions.py`或`tasks.py`傳入
-6. 使用 `@log_func_args` 裝飾器進行函數參數日誌記錄
-7. 其他api錯誤處理使用`components/fastapi/exceptions.py`裡的類別，若是不足請提出建議或增加相應錯誤類別，但處理結構不變
-8. `@transactions`裝飾器會建立transaction，並在離開函式時commit，若有exception會rollback
-9. 若是有query出來物件要修改，在修改完之後不用呼叫add，直接呼叫commit即可
-10. 若是回傳是物件
+5. 使用 `@log_func_args` 裝飾器進行函數參數日誌記錄
+6. 其他api錯誤處理使用`components/fastapi/exceptions.py`裡的類別，若是不足請提出建議或增加相應錯誤類別，但處理結構不變
+7. `@transactions`裝飾器會建立transaction，並在離開函式時commit，若有exception會rollback
+8. 若是有query出來物件要修改，在修改完之後不用呼叫add，直接呼叫commit即可
+9. 若是回傳是物件
 
 
 ### 傳輸串接資料模型
@@ -178,17 +229,14 @@ process_long_task.send(data)
    - 使用適當的欄位預設值和驗證
    - 每個API獨立使用一組InModel
    - OutModel則需要另外判斷，要先搜尋是否是需要統一對外結構的內容決定是否共用
-2. 每個API,input與output的model都要獨立定義，避免共用造成不易維護與理解，僅有少數例外
-3. action使用view接收的model直接傳入，不用特別拆開傳入
-4. input帶進來的model只能到actions.py,不可以傳到service.py或components/裡面等共用的程式中
-5. 若是呼叫service.py或components/等共用內容有複雜結構時，也要建立model放在對應的module的serializers.py中，要建立前務必先尋找是否有適用的model可以使用，避免使用dict物件呼叫，造成不易維護與理解
-6. 分頁查詢模型:
+2. 不只是對外傳輸，包括若是程式內呼叫要是有明確結構，也都要建立對應的model放在對應的module的serializers.py中，要建立前務必先尋找是否有適用的model可以使用，避免使用dict物件呼叫，造成不易維護與理解
+3. 分頁查詢模型: 
    - 列表查詢的輸入使用 `OffsetPageInModel` 作為基底類別
    - 列表輸出使用 `OffsetPageOutModel[具體OutModel]` 格式
    - OffsetPageInModel 包含 offset 和 limit 參數用於分頁控制
-7. 欄位描述語系: `Field.title` 預設使用繁中描述；技術名詞/對外既有英文契約可用英文，務必在同一模型內保持一致。
-8. 資料驗證: 善用 Pydantic 的驗證功能，包含格式、範圍、必填等驗證
-9. 建立欄位時，一律使用關鍵字參數方式指定參數
+4. 欄位描述語系: `Field.title` 預設使用繁中描述；技術名詞/對外既有英文契約可用英文，務必在同一模型內保持一致。
+5. 資料驗證: 善用 Pydantic 的驗證功能，包含格式、範圍、必填等驗證
+6. 建立欄位時，一律使用關鍵字參數方式指定參數
 
 範例：
 ```python
@@ -460,3 +508,100 @@ def get_bulletin(bulletin_id: int = Path(..., title='系統公告編號'), opera
 
 ### 其他語法規範
 1. json dump一率加上ensure_ascii=False
+
+``````
+
+---
+
+感謝Jack協助優化
+``````
+# Git Commit Message 生成規則
+
+## 輸出格式（嚴格遵守）
+```
+feat: <單號> <任務名稱>
+<變更記錄>
+```
+
+## 規則說明
+
+### **單號提取**
+- 從分支名稱提取，格式：`分支類型/單號`
+- 範例：`feature/NABI-543` → 單號為 `NABI-543`
+- 若無法提取則使用 `UNKNOWN`
+
+### **任務名稱**
+- 優先使用提供的任務描述
+- 若無提供則使用預設格式：`功能開發` 或 `程式修改`
+
+### **變更記錄格式**
+```
+<序號>. <類型>: <模組> <說明>
+```
+
+#### **類型定義**
+- `新增`：新建檔案，新的函式，新的API，新的Model
+- `修改`：修改現有檔案，修正錯誤，優化邏輯
+
+#### **模組命名規則**
+| 路徑範例                    | 模組名稱              |
+| --------------------------- | --------------------- |
+| `api_ap/ability/*.py`       | `api_ap/ability`      |
+| `api_user/*.py`             | `api_user`            |
+| `services/notify_v2/*.py`   | `services/notify_v2`  |
+| `frontend/components/*.js`  | `frontend/components` |
+| `database/migrations/*.sql` | `database/migrations` |
+
+**規則**：取到倒數第二層目錄，去除檔案名稱
+
+#### **說明撰寫**
+- 每項不超過 15 字
+- 描述功能異動，非技術細節
+- 同模組可分多項說明
+
+## 範例輸出
+
+### 範例 1：功能開發
+```
+feat: NABI-543 新增技能管理功能
+1. 新增: api_ap/ability 技能匯入API
+2. 修改: ability 增加類型欄位  
+3. 修改: ability 資料過濾邏輯
+```
+
+### 範例 2：修復問題
+```
+feat: NABI-789 修正使用者驗證
+1. 修改: api_user 修正登入邏輯
+2. 修改: services/auth 加強安全驗證
+```
+
+### 範例 3：複雜變更
+```
+feat: NABI-456 優化通知系統
+1. 新增: services/notify_v2 建立新通知服務
+2. 修改: api_user 整合通知功能
+3. 修改: frontend/components 更新通知顯示
+4. 修改: database/migrations 新增通知表格
+```
+
+## 約束條件
+- 必須嚴格按照格式輸出
+- 序號從 1 開始遞增
+- 每個有變更的模組都必須列出
+- 若資訊不足，使用預設值而非跳過
+- 變更記錄依模組類型分組排列（新增在前，修改在後）
+
+## 輸出前檢查清單
+- □ 格式是否正確
+- □ 單號是否正確提取
+- □ 所有變更模組是否都已列出  
+- □ 說明是否簡潔明瞭（25字內）
+- □ 序號是否連續遞增
+
+## 錯誤處理
+- 分支名稱格式錯誤 → 使用 `UNKNOWN` 作為單號
+- 無任務描述 → 使用 `功能異動` 作為預設
+- 無法解析模組 → 使用完整路徑
+- 空的變更清單 → 輸出 `無程式異動`
+``````

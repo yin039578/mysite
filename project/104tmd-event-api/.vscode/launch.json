@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API Server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/local.py",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "name": "Dramatiq Worker",
+            "type": "python",
+            "request": "launch",
+            "module": "dramatiq",
+            "args": [
+                "app.dramatiq:broker",
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run API and Worker",
+            "configurations": [
+                "API Server",
+                "Dramatiq Worker"
+            ],
+            "stopAll": true // optional: 若其中一個結束就全部終止
+        }
+    ]
+}
