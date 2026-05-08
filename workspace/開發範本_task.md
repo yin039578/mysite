@@ -1,5 +1,5 @@
-# Task 【Giver】新增FB連結回傳欄位_2025/5月
-[Jira](https://104corp.atlassian.net/browse/GIVERFARM-1556)
+# Task ［後台］新增課程通知功能
+[Jira](https://104corp.atlassian.net/browse/NABI-5756)
 
 ## 需求&規則
 

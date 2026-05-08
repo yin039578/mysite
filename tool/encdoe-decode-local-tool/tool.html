@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>離線加解碼工具</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0f1117;
+    --bg-secondary: #1a1d27;
+    --bg-tertiary: #242834;
+    --bg-hover: #2d3245;
+    --border: #353a4d;
+    --text-primary: #e4e6f0;
+    --text-secondary: #9198b0;
+    --text-muted: #5d6382;
+    --accent: #6c8cff;
+    --accent-hover: #8aa4ff;
+    --accent-bg: rgba(108, 140, 255, 0.12);
+    --success: #4ade80;
+    --error: #f87171;
+    --warning: #fbbf24;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --transition: 0.2s ease;
+    --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Layout */
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0 20px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .sidebar-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-group {
+    margin-bottom: 16px;
+  }
+
+  .sidebar-group-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0 20px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-item {
+    display: block;
+    width: 100%;
+    padding: 8px 20px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition);
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+
+  .sidebar-item.active {
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .main {
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 960px;
+  }
+
+  .tool-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .tool-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  /* Textareas */
+  .io-section { margin-bottom: 16px; }
+
+  .io-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .io-label-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .io-actions { display: flex; gap: 6px; }
+
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .btn-icon:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  .btn-icon.copied {
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  /* Buttons */
+  .action-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  .btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+
+  .btn-swap {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  .btn-swap:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Error / status */
+  .status {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  .status.error {
+    display: block;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: var(--error);
+  }
+
+  .status.success {
+    display: block;
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: var(--success);
+  }
+
+  /* Hash options */
+  .hash-options {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .hash-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .hash-options input[type="radio"] {
+    accent-color: var(--accent);
+  }
+
+  /* JSON options */
+  .json-options {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .json-options label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .json-options select {
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: var(--font-sans);
+    outline: none;
+  }
+
+  /* Info box */
+  .info-box {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: var(--accent-bg);
+    border: 1px solid rgba(108, 140, 255, 0.2);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .info-box strong { color: var(--accent); }
+
+  /* Byte count */
+  .byte-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* Tool panel hide/show */
+  .tool-panel { display: none; }
+  .tool-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-title">🔐 Codec Tool</div>
+    <div class="sidebar-subtitle">離線加解碼工具</div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">編碼 / 解碼</div>
+      <button class="sidebar-item active" onclick="switchTool('base64')">Base64</button>
+      <button class="sidebar-item" onclick="switchTool('base58')">Base58</button>
+      <button class="sidebar-item" onclick="switchTool('base32')">Base32</button>
+      <button class="sidebar-item" onclick="switchTool('hex')">Base16 / Hex</button>
+      <button class="sidebar-item" onclick="switchTool('url')">URL Encode</button>
+      <button class="sidebar-item" onclick="switchTool('html')">HTML Entity</button>
+      <button class="sidebar-item" onclick="switchTool('unicode')">Unicode Escape</button>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">雜湊（單向）</div>
+      <button class="sidebar-item" onclick="switchTool('hash')">SHA Hash</button>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">格式化</div>
+      <button class="sidebar-item" onclick="switchTool('json')">JSON 格式化</button>
+    </div>
+
+    <div class="sidebar-footer">
+      🔒 純離線運作<br>不發送任何網路請求<br>原始碼皆為原生 JavaScript
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ===== Base64 ===== -->
+    <div id="tool-base64" class="tool-panel active">
+      <div class="tool-title">Base64</div>
+      <div class="tool-desc">RFC 4648 標準 Base64 編碼/解碼，支援 Unicode (UTF-8)</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('base64')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('base64')">貼上</button>
+          </div>
+        </div>
+        <textarea id="base64-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+        <div class="byte-count" id="base64-input-count"></div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="base64Encode()">Encode →</button>
+        <button class="btn btn-primary" onclick="base64Decode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('base64')">⇅</button>
+      </div>
+
+      <div id="base64-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('base64')">複製</button>
+          </div>
+        </div>
+        <textarea id="base64-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+        <div class="byte-count" id="base64-output-count"></div>
+      </div>
+
+      <div class="info-box">
+        <strong>Base64</strong> 將二進位資料編碼為 ASCII 字串，常用於郵件附件、Data URI、JWT 等場景。
+        此工具使用 <strong>TextEncoder/TextDecoder</strong> 處理 Unicode 字元。
+      </div>
+    </div>
+
+    <!-- ===== Base58 ===== -->
+    <div id="tool-base58" class="tool-panel">
+      <div class="tool-title">Base58</div>
+      <div class="tool-desc">Bitcoin 風格 Base58 編碼/解碼（排除 0, O, I, l 避免混淆）</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('base58')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('base58')">貼上</button>
+          </div>
+        </div>
+        <textarea id="base58-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="base58Encode()">Encode →</button>
+        <button class="btn btn-primary" onclick="base58Decode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('base58')">⇅</button>
+      </div>
+
+      <div id="base58-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('base58')">複製</button>
+          </div>
+        </div>
+        <textarea id="base58-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+
+      <div class="info-box">
+        <strong>Base58</strong> 字母表：<code>123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz</code><br>
+        常用於 Bitcoin 地址、IPFS CID 等。排除了容易混淆的字元（0/O、I/l）。
+      </div>
+    </div>
+
+    <!-- ===== Base32 ===== -->
+    <div id="tool-base32" class="tool-panel">
+      <div class="tool-title">Base32</div>
+      <div class="tool-desc">RFC 4648 標準 Base32 編碼/解碼</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('base32')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('base32')">貼上</button>
+          </div>
+        </div>
+        <textarea id="base32-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="base32Encode()">Encode →</button>
+        <button class="btn btn-primary" onclick="base32Decode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('base32')">⇅</button>
+      </div>
+
+      <div id="base32-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('base32')">複製</button>
+          </div>
+        </div>
+        <textarea id="base32-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+
+      <div class="info-box">
+        <strong>Base32</strong> 字母表：<code>A-Z</code> 和 <code>2-7</code>，使用 <code>=</code> 填充。
+        常用於 TOTP（Google Authenticator）、Onion 地址等。不區分大小寫。
+      </div>
+    </div>
+
+    <!-- ===== Hex ===== -->
+    <div id="tool-hex" class="tool-panel">
+      <div class="tool-title">Base16 / Hex</div>
+      <div class="tool-desc">十六進制編碼/解碼</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('hex')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('hex')">貼上</button>
+          </div>
+        </div>
+        <textarea id="hex-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="hexEncode()">Encode →</button>
+        <button class="btn btn-primary" onclick="hexDecode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('hex')">⇅</button>
+      </div>
+
+      <div id="hex-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('hex')">複製</button>
+          </div>
+        </div>
+        <textarea id="hex-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+
+      <div class="info-box">
+        <strong>Hex</strong> 將每個位元組轉為兩個十六進制字元。常用於顏色碼、MAC 位址、加密金鑰表示等。
+      </div>
+    </div>
+
+    <!-- ===== URL Encode ===== -->
+    <div id="tool-url" class="tool-panel">
+      <div class="tool-title">URL Encode / Decode</div>
+      <div class="tool-desc">URL 百分比編碼/解碼（encodeURIComponent）</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('url')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('url')">貼上</button>
+          </div>
+        </div>
+        <textarea id="url-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="urlEncode()">Encode →</button>
+        <button class="btn btn-primary" onclick="urlDecode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('url')">⇅</button>
+      </div>
+
+      <div id="url-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('url')">複製</button>
+          </div>
+        </div>
+        <textarea id="url-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+    </div>
+
+    <!-- ===== HTML Entity ===== -->
+    <div id="tool-html" class="tool-panel">
+      <div class="tool-title">HTML Entity</div>
+      <div class="tool-desc">HTML 特殊字元編碼/解碼</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('html')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('html')">貼上</button>
+          </div>
+        </div>
+        <textarea id="html-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="htmlEntityEncode()">Encode →</button>
+        <button class="btn btn-primary" onclick="htmlEntityDecode()">← Decode</button>
+        <button class="btn btn-swap" onclick="swapIO('html')">⇅</button>
+      </div>
+
+      <div id="html-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('html')">複製</button>
+          </div>
+        </div>
+        <textarea id="html-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+    </div>
+
+    <!-- ===== Unicode Escape ===== -->
+    <div id="tool-unicode" class="tool-panel">
+      <div class="tool-title">Unicode Escape</div>
+      <div class="tool-desc">將文字轉換為 \uXXXX 格式，或反向解碼</div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('unicode')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('unicode')">貼上</button>
+          </div>
+        </div>
+        <textarea id="unicode-input" placeholder="輸入要編碼或解碼的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="unicodeEscape()">Escape →</button>
+        <button class="btn btn-primary" onclick="unicodeUnescape()">← Unescape</button>
+        <button class="btn btn-swap" onclick="swapIO('unicode')">⇅</button>
+      </div>
+
+      <div id="unicode-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('unicode')">複製</button>
+          </div>
+        </div>
+        <textarea id="unicode-output" readonly placeholder="結果將顯示在這裡..."></textarea>
+      </div>
+    </div>
+
+    <!-- ===== SHA Hash ===== -->
+    <div id="tool-hash" class="tool-panel">
+      <div class="tool-title">SHA Hash</div>
+      <div class="tool-desc">使用瀏覽器原生 Web Crypto API 計算雜湊值（單向，不可逆）</div>
+
+      <div class="hash-options">
+        <label><input type="radio" name="hash-algo" value="SHA-1"> SHA-1</label>
+        <label><input type="radio" name="hash-algo" value="SHA-256" checked> SHA-256</label>
+        <label><input type="radio" name="hash-algo" value="SHA-384"> SHA-384</label>
+        <label><input type="radio" name="hash-algo" value="SHA-512"> SHA-512</label>
+      </div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('hash')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('hash')">貼上</button>
+          </div>
+        </div>
+        <textarea id="hash-input" placeholder="輸入要計算雜湊的內容..."></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="computeHash()">計算 Hash →</button>
+      </div>
+
+      <div id="hash-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">雜湊結果 (Hex)</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('hash')">複製</button>
+          </div>
+        </div>
+        <textarea id="hash-output" readonly placeholder="雜湊值將顯示在這裡..."></textarea>
+      </div>
+
+      <div class="info-box">
+        <strong>SHA</strong> 系列為密碼學雜湊函式，此處使用瀏覽器內建的 <strong>crypto.subtle</strong> API（無外部套件）。
+        ⚠️ SHA-1 已不建議用於安全用途。
+      </div>
+    </div>
+
+    <!-- ===== JSON ===== -->
+    <div id="tool-json" class="tool-panel">
+      <div class="tool-title">JSON 格式化</div>
+      <div class="tool-desc">美化（Beautify）或壓縮（Minify）JSON 資料</div>
+
+      <div class="json-options">
+        <label>縮排：</label>
+        <select id="json-indent">
+          <option value="2">2 空格</option>
+          <option value="4">4 空格</option>
+          <option value="tab">Tab</option>
+        </select>
+      </div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸入</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="clearInput('json')">清除</button>
+            <button class="btn-icon" onclick="pasteInput('json')">貼上</button>
+          </div>
+        </div>
+        <textarea id="json-input" placeholder='貼上 JSON 資料，例如 {"key": "value"}' style="min-height: 200px;"></textarea>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" onclick="jsonBeautify()">Beautify →</button>
+        <button class="btn btn-secondary" onclick="jsonMinify()">Minify →</button>
+        <button class="btn btn-swap" onclick="swapIO('json')">⇅</button>
+      </div>
+
+      <div id="json-status" class="status"></div>
+
+      <div class="io-section">
+        <div class="io-label">
+          <span class="io-label-text">輸出</span>
+          <div class="io-actions">
+            <button class="btn-icon" onclick="copyOutput('json')">複製</button>
+          </div>
+        </div>
+        <textarea id="json-output" readonly placeholder="結果將顯示在這裡..." style="min-height: 200px;"></textarea>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// UI Helpers
+// ============================================================
+
+function switchTool(name) {
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('tool-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function clearInput(tool) {
+  document.getElementById(tool + '-input').value = '';
+  document.getElementById(tool + '-output').value = '';
+  clearStatus(tool);
+}
+
+async function pasteInput(tool) {
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById(tool + '-input').value = text;
+  } catch (e) {
+    showStatus(tool, '無法讀取剪貼簿，請手動貼上', 'error');
+  }
+}
+
+function copyOutput(tool) {
+  const output = document.getElementById(tool + '-output');
+  navigator.clipboard.writeText(output.value).then(() => {
+    const btn = output.closest('.io-section').querySelector('.btn-icon');
+    btn.textContent = '已複製 ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function swapIO(tool) {
+  const inp = document.getElementById(tool + '-input');
+  const out = document.getElementById(tool + '-output');
+  const tmp = inp.value;
+  inp.value = out.value;
+  out.value = tmp;
+}
+
+function showStatus(tool, msg, type) {
+  const el = document.getElementById(tool + '-status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+}
+
+function clearStatus(tool) {
+  const el = document.getElementById(tool + '-status');
+  el.className = 'status';
+  el.textContent = '';
+}
+
+// ============================================================
+// Base64
+// ============================================================
+
+function base64Encode() {
+  try {
+    const input = document.getElementById('base64-input').value;
+    const bytes = new TextEncoder().encode(input);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    document.getElementById('base64-output').value = btoa(binary);
+    clearStatus('base64');
+  } catch (e) {
+    showStatus('base64', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function base64Decode() {
+  try {
+    const input = document.getElementById('base64-input').value.trim();
+    const binary = atob(input);
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    document.getElementById('base64-output').value = new TextDecoder().decode(bytes);
+    clearStatus('base64');
+  } catch (e) {
+    showStatus('base64', '解碼錯誤：輸入不是有效的 Base64 字串', 'error');
+  }
+}
+
+// ============================================================
+// Base58 (Bitcoin alphabet)
+// ============================================================
+
+const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+function base58Encode() {
+  try {
+    const input = document.getElementById('base58-input').value;
+    const bytes = new TextEncoder().encode(input);
+
+    // Count leading zeros
+    let zeros = 0;
+    for (const b of bytes) { if (b === 0) zeros++; else break; }
+
+    // Convert bytes to big integer then to base58
+    const digits = [0];
+    for (const byte of bytes) {
+      let carry = byte;
+      for (let j = 0; j < digits.length; j++) {
+        carry += digits[j] << 8;
+        digits[j] = carry % 58;
+        carry = (carry / 58) | 0;
+      }
+      while (carry > 0) {
+        digits.push(carry % 58);
+        carry = (carry / 58) | 0;
+      }
+    }
+
+    let result = '';
+    for (let i = 0; i < zeros; i++) result += BASE58_ALPHABET[0];
+    for (let i = digits.length - 1; i >= 0; i--) result += BASE58_ALPHABET[digits[i]];
+
+    document.getElementById('base58-output').value = result;
+    clearStatus('base58');
+  } catch (e) {
+    showStatus('base58', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function base58Decode() {
+  try {
+    const input = document.getElementById('base58-input').value.trim();
+
+    // Validate
+    for (const ch of input) {
+      if (BASE58_ALPHABET.indexOf(ch) === -1) throw new Error('無效字元: ' + ch);
+    }
+
+    // Count leading '1's (representing zero bytes)
+    let zeros = 0;
+    for (const ch of input) { if (ch === '1') zeros++; else break; }
+
+    // Decode
+    const bytes = [0];
+    for (const ch of input) {
+      let carry = BASE58_ALPHABET.indexOf(ch);
+      for (let j = 0; j < bytes.length; j++) {
+        carry += bytes[j] * 58;
+        bytes[j] = carry & 0xff;
+        carry >>= 8;
+      }
+      while (carry > 0) {
+        bytes.push(carry & 0xff);
+        carry >>= 8;
+      }
+    }
+
+    // Add leading zero bytes
+    const result = new Uint8Array(zeros + bytes.length);
+    for (let i = zeros; i < result.length; i++) {
+      result[i] = bytes[result.length - 1 - i];
+    }
+
+    document.getElementById('base58-output').value = new TextDecoder().decode(result);
+    clearStatus('base58');
+  } catch (e) {
+    showStatus('base58', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// Base32 (RFC 4648)
+// ============================================================
+
+const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+function base32Encode() {
+  try {
+    const input = document.getElementById('base32-input').value;
+    const bytes = new TextEncoder().encode(input);
+    let bits = '';
+    bytes.forEach(b => bits += b.toString(2).padStart(8, '0'));
+
+    // Pad to multiple of 5
+    while (bits.length % 5 !== 0) bits += '0';
+
+    let result = '';
+    for (let i = 0; i < bits.length; i += 5) {
+      result += BASE32_ALPHABET[parseInt(bits.substr(i, 5), 2)];
+    }
+
+    // Add padding
+    while (result.length % 8 !== 0) result += '=';
+
+    document.getElementById('base32-output').value = result;
+    clearStatus('base32');
+  } catch (e) {
+    showStatus('base32', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function base32Decode() {
+  try {
+    const input = document.getElementById('base32-input').value.trim().toUpperCase().replace(/=+$/, '');
+
+    for (const ch of input) {
+      if (BASE32_ALPHABET.indexOf(ch) === -1) throw new Error('無效字元: ' + ch);
+    }
+
+    let bits = '';
+    for (const ch of input) {
+      bits += BASE32_ALPHABET.indexOf(ch).toString(2).padStart(5, '0');
+    }
+
+    const bytes = [];
+    for (let i = 0; i + 8 <= bits.length; i += 8) {
+      bytes.push(parseInt(bits.substr(i, 8), 2));
+    }
+
+    document.getElementById('base32-output').value = new TextDecoder().decode(new Uint8Array(bytes));
+    clearStatus('base32');
+  } catch (e) {
+    showStatus('base32', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// Hex (Base16)
+// ============================================================
+
+function hexEncode() {
+  try {
+    const input = document.getElementById('hex-input').value;
+    const bytes = new TextEncoder().encode(input);
+    let hex = '';
+    bytes.forEach(b => hex += b.toString(16).padStart(2, '0'));
+    document.getElementById('hex-output').value = hex;
+    clearStatus('hex');
+  } catch (e) {
+    showStatus('hex', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function hexDecode() {
+  try {
+    let input = document.getElementById('hex-input').value.trim().replace(/\s+/g, '').replace(/^0x/i, '');
+    if (input.length % 2 !== 0) throw new Error('Hex 字串長度必須為偶數');
+    if (!/^[0-9a-fA-F]*$/.test(input)) throw new Error('包含無效的 Hex 字元');
+
+    const bytes = [];
+    for (let i = 0; i < input.length; i += 2) {
+      bytes.push(parseInt(input.substr(i, 2), 16));
+    }
+
+    document.getElementById('hex-output').value = new TextDecoder().decode(new Uint8Array(bytes));
+    clearStatus('hex');
+  } catch (e) {
+    showStatus('hex', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// URL Encode
+// ============================================================
+
+function urlEncode() {
+  try {
+    const input = document.getElementById('url-input').value;
+    document.getElementById('url-output').value = encodeURIComponent(input);
+    clearStatus('url');
+  } catch (e) {
+    showStatus('url', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function urlDecode() {
+  try {
+    const input = document.getElementById('url-input').value;
+    document.getElementById('url-output').value = decodeURIComponent(input);
+    clearStatus('url');
+  } catch (e) {
+    showStatus('url', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// HTML Entity
+// ============================================================
+
+function htmlEntityEncode() {
+  try {
+    const input = document.getElementById('html-input').value;
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    let result = '';
+    for (const ch of input) {
+      if (map[ch]) {
+        result += map[ch];
+      } else if (ch.charCodeAt(0) > 127) {
+        // Encode non-ASCII as numeric entity
+        result += '&#' + ch.codePointAt(0) + ';';
+      } else {
+        result += ch;
+      }
+    }
+    document.getElementById('html-output').value = result;
+    clearStatus('html');
+  } catch (e) {
+    showStatus('html', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function htmlEntityDecode() {
+  try {
+    const input = document.getElementById('html-input').value;
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = input;
+    document.getElementById('html-output').value = textarea.value;
+    clearStatus('html');
+  } catch (e) {
+    showStatus('html', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// Unicode Escape
+// ============================================================
+
+function unicodeEscape() {
+  try {
+    const input = document.getElementById('unicode-input').value;
+    let result = '';
+    for (const ch of input) {
+      const cp = ch.codePointAt(0);
+      if (cp > 0xffff) {
+        result += '\\u{' + cp.toString(16) + '}';
+      } else if (cp > 127) {
+        result += '\\u' + cp.toString(16).padStart(4, '0');
+      } else {
+        result += ch;
+      }
+    }
+    document.getElementById('unicode-output').value = result;
+    clearStatus('unicode');
+  } catch (e) {
+    showStatus('unicode', '編碼錯誤：' + e.message, 'error');
+  }
+}
+
+function unicodeUnescape() {
+  try {
+    const input = document.getElementById('unicode-input').value;
+    const result = input
+      .replace(/\\u\{([0-9a-fA-F]+)\}/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+      .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+    document.getElementById('unicode-output').value = result;
+    clearStatus('unicode');
+  } catch (e) {
+    showStatus('unicode', '解碼錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// SHA Hash (Web Crypto API)
+// ============================================================
+
+async function computeHash() {
+  try {
+    const input = document.getElementById('hash-input').value;
+    const algo = document.querySelector('input[name="hash-algo"]:checked').value;
+    const data = new TextEncoder().encode(input);
+    const hashBuffer = await crypto.subtle.digest(algo, data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    document.getElementById('hash-output').value = hashHex;
+    showStatus('hash', algo + ' 計算完成（' + hashHex.length * 4 + ' bits）', 'success');
+  } catch (e) {
+    showStatus('hash', '雜湊錯誤：' + e.message, 'error');
+  }
+}
+
+// ============================================================
+// JSON Beautify / Minify
+// ============================================================
+
+function jsonBeautify() {
+  try {
+    const input = document.getElementById('json-input').value.trim();
+    const parsed = JSON.parse(input);
+    const indentSel = document.getElementById('json-indent').value;
+    const indent = indentSel === 'tab' ? '\t' : parseInt(indentSel);
+    document.getElementById('json-output').value = JSON.stringify(parsed, null, indent);
+    clearStatus('json');
+  } catch (e) {
+    showStatus('json', 'JSON 解析錯誤：' + e.message, 'error');
+  }
+}
+
+function jsonMinify() {
+  try {
+    const input = document.getElementById('json-input').value.trim();
+    const parsed = JSON.parse(input);
+    document.getElementById('json-output').value = JSON.stringify(parsed);
+    clearStatus('json');
+  } catch (e) {
+    showStatus('json', 'JSON 解析錯誤：' + e.message, 'error');
+  }
+}
+</script>
+
+</body>
+</html>

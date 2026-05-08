@@ -6,8 +6,8 @@ import { SharedArray } from "k6/data";
 
 // ========= 統一設定區 =========
 const CONFIG = {
-  event_id: "991afc9e-afc7-4c7f-9427-d425d5ec637f",
-  session_id: "446ab3c9-a67d-489f-9950-b63ad84e4233",  // 固定 session_id
+  event_id: "125ad295-70cf-4b67-a437-36712cc38ead",
+  session_id: "8d6892c9-5e1e-4d72-9f5c-ead5d86a3fef",  // 固定 session_id
   vus: 10,  // 指定併發數
   maxDuration: "60m",  // 最大執行時間
 };
